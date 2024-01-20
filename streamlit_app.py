@@ -33,7 +33,7 @@ def main():
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
         
         # Conversie la string pentru a evita erori la concatenare
-        df.iloc[:, 7] = df.iloc[:, 7].astype(float).round(2)
+        df.iloc[:, 7] = df.iloc[:, 7].astype(str)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         df_nou = pd.DataFrame({
             "Nr. crt.": df.iloc[:, 0],
