@@ -19,7 +19,7 @@ def main():
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
-    stop_text = "Total active corporale"
+    stop_text = "Rezervor combustibil"
 
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
@@ -30,7 +30,9 @@ def main():
             df = df.iloc[3:stop_index[0]]  # Ignorăm primele 3 rânduri și oprim la stop_text
         else:
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
-
+        
+        # Conversie la string pentru a evita erori la concatenare
+        df.iloc[:, 7] = df.iloc[:, 7].astype(str)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         df_nou = pd.DataFrame({
             "Nr. crt.": df.iloc[:, 0],
