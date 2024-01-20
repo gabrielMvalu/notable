@@ -70,65 +70,52 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-    def transforma_date_tabel2(df):
-        # Găsim indexul pentru "Total active corporale" și "Total active necorporale"
+   def transforma_date_tabel2(df):
+        # Găsim rândul unde coloana 2 are valoarea "Total active corporale"
         total_corporale_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()
-        total_necorporale_index = df.index[df.iloc[:, 1] == "Total active necorporale"].tolist()
-    
-        # Extragem utilajele și serviciile înainte de "Total active corporale"
+        # Dacă găsim valoarea, folosim rândurile de la 2 până la acesta
         if total_corporale_index:
-            utilaje_df = df.iloc[1:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
+            df = df.iloc[1:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
         else:
-            utilaje_df = df.iloc[1:]  # Dacă "Total active corporale" nu este găsit
+            df = df.iloc[1:]  # Dacă "Total active corporale" nu este găsit
     
-        # Extragem serviciile între "Total active corporale" și "Total active necorporale"
-        if total_corporale_index and total_necorporale_index:
-            servicii_df = df.iloc[total_corporale_index[0] + 1:total_necorporale_index[0]]
-        else:
-            servicii_df = pd.DataFrame()  # Dacă nu sunt delimitări, nu avem servicii de extras
-    
-        # Unim utilajele și serviciile într-un singur DataFrame
-        df_nou = pd.concat([utilaje_df, servicii_df], ignore_index=True)
-    
-        # Creăm noul DataFrame cu coloanele specificate
+        # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         tabel_2 = pd.DataFrame({
-            "Nr. crt.": df_nou.iloc[:, 0],
-            "Denumire": df_nou.iloc[:, 1],
+            "Nr. crt.": df.iloc[:, 0],
+            "Denumire": df.iloc[:, 1],
             "UM": "buc",
-            "Cantitate": df_nou.iloc[:, 11],
-            "Preţ unitar (fără TVA)": df_nou.iloc[:, 3],
-            "Valoare Totală (fără TVA)": df_nou.iloc[:, 4]
+            "Cantitate": df.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df.iloc[:, 4]
         })
-    
-        # Adăugăm rândurile pentru totaluri dacă există
-        for total_text in ["Total active corporale", "Total active necorporale"]:
-            total_index = df.index[df.iloc[:, 1] == total_text].tolist()
-            if total_index:
-                total_row = df.iloc[total_index[0], :]
-                tabel_2 = tabel_2.append({
-                    "Nr. crt.": "",
-                    "Denumire": total_text,
-                    "UM": "",
-                    "Cantitate": "",
-                    "Preţ unitar (fără TVA)": "",
-                    "Valoare Totală (fără TVA)": total_row[6]
-                }, ignore_index=True)
+        
+        # Adăugăm manual rândul pentru "Total active corporale" dacă este prezent
+        if total_corporale_index:
+            total_row = df.loc[total_corporale_index[0], :]
+            tabel_2 = tabel_2.append({
+                "Nr. crt.": "",
+                "Denumire": "Total active corporale",
+                "UM": "",
+                "Cantitate": "",
+                "Preţ unitar (fără TVA)": "",
+                "Valoare Totală (fără TVA)": total_row[6]
+            }, ignore_index=True)
     
         return tabel_2
-    # Butonul și logica pentru generarea Tabelului 2 și descărcarea acestuia
+
+       # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
             try:
-                # Citirea datelor din fișierul încărcat
                 df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
                 
                 # Generarea Tabelului 2
                 tabel_2 = transforma_date_tabel2(df)
                 
-                # Afișarea Tabelului 2 în aplicația Streamlit
+                # Afișăm tabelul transformat în aplicația Streamlit
                 st.dataframe(tabel_2)
-
-                # Conversia tabelului într-un obiect Excel pentru a putea fi descărcat
+    
+                # Conversia DataFrame-ului într-un obiect Excel și crearea unui buton de descărcare
                 towrite = BytesIO()
                 tabel_2.to_excel(towrite, index=False, engine='openpyxl')
                 towrite.seek(0)  # Ne reîntoarcem la începutul stream-ului pentru descărcare
@@ -138,7 +125,7 @@ def main():
                                    data=towrite,
                                    file_name="tabel_2_prelucrat.xlsx",
                                    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
-
+    
             except Exception as e:
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
