@@ -1,24 +1,17 @@
 import streamlit as st
-import os
-
-# Funcție pentru încărcarea și afișarea logo-ului
-def load_logo(logo_path):
-    with open(logo_path, "rb") as file:
-        st.image(file, width=100)  # Modifică width după necesități
+from PIL import Image
 
 def main():
     st.title("Aplicația mea Streamlit")
 
-    # Încărcarea și afișarea logo-ului
+    # Sidebar pentru încărcarea și afișarea logo-ului
     st.sidebar.title("Încărcare Document")
-    logo_path = "LogoSTR.PNG"  # The logo is assumed to be in the same directory as the script
-    logo = Image.open(logo_path)
-    st.sidebar.image(logo, use_column_width=True)
-  
-    if os.path.exists(logo_path):
-        load_logo(logo_path)
-    else:
-        st.write("Logo indisponibil")
+    logo_path = "LogoSTR.PNG"  # Presupunem că logo-ul este în același director cu scriptul
+    try:
+        logo = Image.open(logo_path)
+        st.sidebar.image(logo, use_column_width=True)
+    except IOError:
+        st.sidebar.error("Eroare la încărcarea logo-ului.")
 
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
@@ -33,3 +26,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
