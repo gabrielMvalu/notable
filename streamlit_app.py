@@ -21,14 +21,14 @@ def main():
 
     
    # Funcție pentru verificarea existenței foii "P. FINANCIAR"
-    def verifica_foaia_p_financiar(file):
-        try:
-            # Încercăm să citim foaia specificată
-            df = pd.read_excel(file, sheet_name="P. FINANCIAR")
-            return df, True
-        except ValueError:
-            # Dacă foaia nu există, întoarcem False
-            return None, False    
+   def verifica_foaia_p_financiar(uploaded_file):
+    try:
+        # Citim fișierul încărcat direct într-un DataFrame pandas
+        df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
+        return df, True
+    except ValueError:
+        # Dacă foaia nu există, întoarcem False
+        return None, False
 
  # Butoane pentru generarea tabelelor
     if st.button("Generează Tabel 1"):
