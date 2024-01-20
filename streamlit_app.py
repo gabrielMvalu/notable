@@ -75,9 +75,9 @@ def main():
         total_corporale_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()
         # Dacă găsim valoarea, folosim rândurile de la 2 până la acesta
         if total_corporale_index:
-            df = df.iloc[1:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
+            df = df.iloc[3:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
         else:
-            df = df.iloc[1:]  # Dacă "Total active corporale" nu este găsit
+            df = df.iloc[3:]  # Dacă "Total active corporale" nu este găsit
     
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         tabel_2 = pd.DataFrame({
@@ -88,18 +88,6 @@ def main():
             "Preţ unitar (fără TVA)": df.iloc[:, 3],
             "Valoare Totală (fără TVA)": df.iloc[:, 4]
         })
-        
-        # Adăugăm manual rândul pentru "Total active corporale" dacă este prezent
-        if total_corporale_index:
-            total_row = df.loc[total_corporale_index[0], :]
-            tabel_2 = tabel_2.append({
-                "Nr. crt.": "",
-                "Denumire": "Total active corporale",
-                "UM": "",
-                "Cantitate": "",
-                "Preţ unitar (fără TVA)": "",
-                "Valoare Totală (fără TVA)": total_row[6]
-            }, ignore_index=True)
     
         return tabel_2
 
