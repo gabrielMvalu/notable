@@ -71,65 +71,50 @@ def main():
             st.error("Te rog să încarci un fișier.")
 
     def transforma_date_tabel2(df):
-        # Inițializăm un DataFrame gol pentru Tabelul 2
-        tabel_2 = pd.DataFrame(columns=["Nr. crt.", "Denumire", "UM", "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)"])
-        
-        # Variabila pentru a ține evidența numărului curent al criteriului
-        numar_criteriu = 1
-        
-        # Extragerea utilajelor
-        for index, row in df.iterrows():
-            if row[1] == "Total active corporale":
-                break
-            new_row = pd.DataFrame([{
-                "Nr. crt.": numar_criteriu,
-                "Denumire": row[1],
-                "UM": "buc",
-                "Cantitate": row[11],
-                "Preţ unitar (fără TVA)": row[3],
-                "Valoare Totală (fără TVA)": row[4]
-            }])
-            tabel_2 = pd.concat([tabel_2, new_row], ignore_index=True)
-            numar_criteriu += 1
-        
-        # Extragerea serviciilor
-        servicii_start_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()[0] + 1
-        servicii_end_index = df.index[df.iloc[:, 1] == "Total active necorporale"].tolist()[0]
-        
-        for index in range(servicii_start_index, servicii_end_index):
-            new_row = pd.DataFrame([{
-                "Nr. crt.": numar_criteriu,
-                "Denumire": df.iloc[index, 1],
-                "UM": "buc",
-                "Cantitate": df.iloc[index, 11],
-                "Preţ unitar (fără TVA)": df.iloc[index, 3],
-                "Valoare Totală (fără TVA)": df.iloc[index, 4]
-            }])
-            tabel_2 = pd.concat([tabel_2, new_row], ignore_index=True)
-            numar_criteriu += 1
-        
-        # Adăugarea totalurilor pentru active corporale și necorporale
+        # Găsim indexul pentru "Total active corporale" și "Total active necorporale"
+        total_corporale_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()
+        total_necorporale_index = df.index[df.iloc[:, 1] == "Total active necorporale"].tolist()
+    
+        # Extragem utilajele și serviciile înainte de "Total active corporale"
+        if total_corporale_index:
+            utilaje_df = df.iloc[1:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
+        else:
+            utilaje_df = df.iloc[1:]  # Dacă "Total active corporale" nu este găsit
+    
+        # Extragem serviciile între "Total active corporale" și "Total active necorporale"
+        if total_corporale_index and total_necorporale_index:
+            servicii_df = df.iloc[total_corporale_index[0] + 1:total_necorporale_index[0]]
+        else:
+            servicii_df = pd.DataFrame()  # Dacă nu sunt delimitări, nu avem servicii de extras
+    
+        # Unim utilajele și serviciile într-un singur DataFrame
+        df_nou = pd.concat([utilaje_df, servicii_df], ignore_index=True)
+    
+        # Creăm noul DataFrame cu coloanele specificate
+        tabel_2 = pd.DataFrame({
+            "Nr. crt.": df_nou.iloc[:, 0],
+            "Denumire": df_nou.iloc[:, 1],
+            "UM": "buc",
+            "Cantitate": df_nou.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df_nou.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df_nou.iloc[:, 4]
+        })
+    
+        # Adăugăm rândurile pentru totaluri dacă există
         for total_text in ["Total active corporale", "Total active necorporale"]:
-            total_index = df.index[df.iloc[:, 1] == total_text].tolist()[0]
-            new_row = pd.DataFrame([{
-                "Nr. crt.": "",
-                "Denumire": total_text,
-                "UM": "",
-                "Cantitate": "",
-                "Preţ unitar (fără TVA)": "",
-                "Valoare Totală (fără TVA)": df.iloc[total_index, 6]
-            }])
-            tabel_2 = pd.concat([tabel_2, new_row], ignore_index=True)
-        
-        # Formatarea valorilor numerice cu două zecimale
-        tabel_2["Cantitate"] = tabel_2["Cantitate"].apply(lambda x: '{:.2f}'.format(x) if pd.notnull(x) else x)
-        tabel_2["Preţ unitar (fără TVA)"] = tabel_2["Preţ unitar (fără TVA)"].apply(lambda x: '{:.2f}'.format(x) if pd.notnull(x) else x)
-        tabel_2["Valoare Totală (fără TVA)"] = tabel_2["Valoare Totală (fără TVA)"].apply(lambda x: '{:.2f}'.format(x) if pd.notnull(x) else x)
-        
+            total_index = df.index[df.iloc[:, 1] == total_text].tolist()
+            if total_index:
+                total_row = df.iloc[total_index[0], :]
+                tabel_2 = tabel_2.append({
+                    "Nr. crt.": "",
+                    "Denumire": total_text,
+                    "UM": "",
+                    "Cantitate": "",
+                    "Preţ unitar (fără TVA)": "",
+                    "Valoare Totală (fără TVA)": total_row[6]
+                }, ignore_index=True)
+    
         return tabel_2
-
-
-
     # Butonul și logica pentru generarea Tabelului 2 și descărcarea acestuia
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
