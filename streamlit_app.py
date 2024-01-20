@@ -33,15 +33,14 @@ def main():
         if uploaded_file is not None:
             df, foaie_gasita = verifica_foaia_p_financiar(uploaded_file)
             if foaie_gasita:
-                # Creăm un DataFrame gol cu header-ul specificat pentru Tabelul 1
+                # Creăm un DataFrame gol cu header-ul pentru Tabelul 1
                 header_tabel_1 = [
                     "Nr. crt.", "Denumirea lucrărilor / bunurilor/ serviciilor", "UM", 
                     "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)",
                     "Linie bugetară Eligibil/ neeligibil", "Contribuie la criteriile de evaluare a,b,c,d"
                 ]
                 tabel_1 = pd.DataFrame(columns=header_tabel_1)
-                st.dataframe(tabel_1)  # Afisăm tabelul gol
-                
+                st.dataframe(tabel_1)  # Afișăm tabelul gol
             else:
                 st.error("Foaia 'P. FINANCIAR' nu a fost găsită în document.")
 
@@ -49,14 +48,13 @@ def main():
         if uploaded_file is not None:
             df, foaie_gasita = verifica_foaia_p_financiar(uploaded_file)
             if foaie_gasita:
-                # Creăm un DataFrame gol cu header-ul specificat pentru Tabelul 2
+                # Creăm un DataFrame gol cu header-ul pentru Tabelul 2
                 header_tabel_2 = [
                     "Nr. crt.", "Denumirea lucrărilor / bunurilor/ serviciilor care contribuie substanțial la obiectivele de mediu și egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități – conform sub-criteriilor D1 și D2 din cadrul criteriului de evaluare tehnica D", 
                     "UM", "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)"
                 ]
                 tabel_2 = pd.DataFrame(columns=header_tabel_2)
-                st.dataframe(tabel_2)  # Afisăm tabelul gol
-                
+                st.dataframe(tabel_2)  # Afișăm tabelul gol
             else:
                 st.error("Foaia 'P. FINANCIAR' nu a fost găsită în document.")
 
