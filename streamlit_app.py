@@ -18,6 +18,14 @@ def main():
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
+    # Funcție pentru preluarea datelor de pe rândul 7
+    def preluare_date_randul_7(df):
+        if df.shape[0] >= 7:  # Verificăm dacă există cel puțin 7 rânduri
+            date_randul_7 = df.iloc[6]  # Rândurile sunt indexate de la 0, așa că rândul 7 este la indexul 6
+            return date_randul_7
+        else:
+            return None
+
     # Funcție pentru verificarea existenței foii "P. FINANCIAR"
     def verifica_foaia_p_financiar(uploaded_file):
         try:
@@ -40,10 +48,21 @@ def main():
                     "Linie bugetară Eligibil/ neeligibil", "Contribuie la criteriile de evaluare a,b,c,d"
                 ]
                 tabel_1 = pd.DataFrame(columns=header_tabel_1)
-                st.dataframe(tabel_1)  # Afișăm tabelul gol
+                
+                # Preluăm datele de pe rândul 7 și le adăugăm în tabelul 1
+                date_randul_7 = preluare_date_randul_7(df)
+                if date_randul_7 is not None:
+                    # Aici vom adăuga logica de mapare a datelor din date_randul_7 în tabelul 1
+                    # De exemplu, presupunând că coloana 2 din df este "Denumirea lucrărilor / bunurilor/ serviciilor":
+                    tabel_1.loc[0] = [1, date_randul_7[1], 'buc', date_randul_7[3], date_randul_7[4], date_randul_7[5], '', '']
+                    
+                st.dataframe(tabel_1)  # Afișăm tabelul actualizat
             else:
                 st.error("Foaia 'P. FINANCIAR' nu a fost găsită în document.")
+        else:
+            st.error("Te rog să încarci un fișier.")
 
+    # Codul pentru butonul "Generează Tabel 2"
     if st.button("Generează Tabel 2"):
         if uploaded_file is not None:
             df, foaie_gasita = verifica_foaia_p_financiar(uploaded_file)
