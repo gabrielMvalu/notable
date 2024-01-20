@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 import pandas as pd
+from io import BytesIO
 
 def main():
     st.title("Aplicația mea Streamlit")
@@ -51,15 +52,25 @@ def main():
     if st.button("Generează Tabel 1"):
         if uploaded_file is not None:
             try:
-                # Citim fișierul încărcat direct într-un DataFrame pandas
                 df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
                 tabel_1 = transforma_date(df)
                 st.dataframe(tabel_1)  # Afișăm tabelul transformat
+
+                # Conversia DataFrame-ului într-un obiect Excel și crearea unui buton de descărcare
+                towrite = BytesIO()
+                tabel_1.to_excel(towrite, index=False, engine='openpyxl')
+                towrite.seek(0)  # Merem la începutul stream-ului
+                st.download_button(label="Descarcă Tabelul ca Excel",
+                                   data=towrite,
+                                   file_name="tabel_prelucrat.xlsx",
+                                   mime="application/vnd.ms-excel")
+
             except ValueError as e:
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
 
+    
     # Codul pentru butonul "Generează Tabel 2"
     if st.button("Generează Tabel 2"):
         if uploaded_file is not None:
