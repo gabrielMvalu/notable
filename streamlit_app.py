@@ -18,19 +18,32 @@ def main():
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
-    # Textul care marchează sfârșitul datelor relevante
+    # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total active corporale"
 
-    # Funcție pentru preluarea datelor începând cu rândul 4 până la textul stop
-    def preluare_date(df):
-        start_row = 3  # Începem cu rândul 4, indexarea este de la 0
+    # Funcție pentru preluarea și transformarea datelor
+    def transforma_date(df):
         # Găsim rândul unde coloana 2 are valoarea stop_text
-        end_row = df.index[df.iloc[:, 1] == stop_text].tolist()  
-        # Dacă nu găsim valoarea, folosim toate rândurile
-        end_row = end_row[0] if end_row else len(df)  
-        # Selectăm rândurile dintre start_row și end_row
-        date = df.iloc[start_row:end_row]
-        return date
+        stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
+        # Dacă găsim valoarea, folosim rândurile de la 4 până la acesta
+        if stop_index:
+            df = df.iloc[3:stop_index[0]]  # Ignorăm primele 3 rânduri și oprim la stop_text
+        else:
+            df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
+
+        # Creăm un nou DataFrame cu coloanele specificate și datele mapate
+        df_nou = pd.DataFrame({
+            "Nr. crt.": df.iloc[:, 0],
+            "Denumirea lucrărilor / bunurilor/ serviciilor": df.iloc[:, 1],
+            "UM": "buc",
+            "Cantitate": df.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df.iloc[:, 2],
+            "Linie bugetară": df.iloc[:, 14],
+            "Eligibil/ neeligibil": df.iloc[:, 7] + " / " + df.iloc[:, 7],
+            "Contribuie la criteriile de evaluare a,b,c,d": "da"
+        })
+        return df_nou
 
     # Butoane pentru generarea tabelelor
     if st.button("Generează Tabel 1"):
@@ -38,12 +51,8 @@ def main():
             try:
                 # Citim fișierul încărcat direct într-un DataFrame pandas
                 df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
-                date = preluare_date(df)
-                
-                # Creăm tabelul cu datele relevante
-                tabel_1 = date.copy()  # Sau alte operații de prelucrare dacă este necesar
-                
-                st.dataframe(tabel_1)  # Afișăm tabelul cu datele
+                tabel_1 = transforma_date(df)
+                st.dataframe(tabel_1)  # Afișăm tabelul transformat
             except ValueError as e:
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
