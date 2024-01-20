@@ -18,47 +18,34 @@ def main():
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
-    # Funcție pentru preluarea datelor de pe rândul 7
-    def preluare_date_randul_7(df):
-        if df.shape[0] >= 7:  # Verificăm dacă există cel puțin 7 rânduri
-            date_randul_7 = df.iloc[6]  # Rândurile sunt indexate de la 0, așa că rândul 7 este la indexul 6
-            return date_randul_7
-        else:
-            return None
+    # Textul care marchează sfârșitul datelor relevante
+    stop_text = "Total active corporale"
 
-    # Funcție pentru verificarea existenței foii "P. FINANCIAR"
-    def verifica_foaia_p_financiar(uploaded_file):
-        try:
-            # Citim fișierul încărcat direct într-un DataFrame pandas
-            df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
-            return df, True
-        except ValueError:
-            # Dacă foaia nu există, întoarcem False
-            return None, False
+    # Funcție pentru preluarea datelor începând cu rândul 4 până la textul stop
+    def preluare_date(df):
+        start_row = 3  # Începem cu rândul 4, indexarea este de la 0
+        # Găsim rândul unde coloana 2 are valoarea stop_text
+        end_row = df.index[df.iloc[:, 1] == stop_text].tolist()  
+        # Dacă nu găsim valoarea, folosim toate rândurile
+        end_row = end_row[0] if end_row else len(df)  
+        # Selectăm rândurile dintre start_row și end_row
+        date = df.iloc[start_row:end_row]
+        return date
 
     # Butoane pentru generarea tabelelor
     if st.button("Generează Tabel 1"):
         if uploaded_file is not None:
-            df, foaie_gasita = verifica_foaia_p_financiar(uploaded_file)
-            if foaie_gasita:
-                # Creăm un DataFrame gol cu header-ul pentru Tabelul 1
-                header_tabel_1 = [
-                    "Nr. crt.", "Denumirea lucrărilor / bunurilor/ serviciilor", "UM", 
-                    "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)",
-                    "Linie bugetară Eligibil/ neeligibil", "Contribuie la criteriile de evaluare a,b,c,d"
-                ]
-                tabel_1 = pd.DataFrame(columns=header_tabel_1)
+            try:
+                # Citim fișierul încărcat direct într-un DataFrame pandas
+                df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
+                date = preluare_date(df)
                 
-                # Preluăm datele de pe rândul 7 și le adăugăm în tabelul 1
-                date_randul_7 = preluare_date_randul_7(df)
-                if date_randul_7 is not None:
-                    # Aici vom adăuga logica de mapare a datelor din date_randul_7 în tabelul 1
-                    # De exemplu, presupunând că coloana 2 din df este "Denumirea lucrărilor / bunurilor/ serviciilor":
-                    tabel_1.loc[0] = [1, date_randul_7[1], 'buc', date_randul_7[3], date_randul_7[4], date_randul_7[5], '', '']
-                    
-                st.dataframe(tabel_1)  # Afișăm tabelul actualizat
-            else:
-                st.error("Foaia 'P. FINANCIAR' nu a fost găsită în document.")
+                # Creăm tabelul cu datele relevante
+                tabel_1 = date.copy()  # Sau alte operații de prelucrare dacă este necesar
+                
+                st.dataframe(tabel_1)  # Afișăm tabelul cu datele
+            except ValueError as e:
+                st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
 
