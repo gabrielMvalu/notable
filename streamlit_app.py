@@ -16,8 +16,8 @@ def main():
         st.sidebar.error("Eroare la încărcarea logo-ului.")
     st.sidebar.markdown("<small>© Castemill S.R.L.</small>", unsafe_allow_html=True)
 
-    # Încărcarea fișierului
-    uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
+    # Încărcarea fișierului în sidebar
+    uploaded_file = st.sidebar.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
@@ -48,8 +48,8 @@ def main():
         })
         return df_nou
 
-    # Butoane pentru generarea tabelelor
-    if st.button("Generează Tabel 1"):
+    # Butoane pentru generarea tabelelor în sidebar
+    if st.sidebar.button("Generează Tabel 1"):
         if uploaded_file is not None:
             try:
                 df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
@@ -70,21 +70,12 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-    
-    # Codul pentru butonul "Generează Tabel 2"
-    if st.button("Generează Tabel 2"):
+    if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
-            df, foaie_gasita = verifica_foaia_p_financiar(uploaded_file)
-            if foaie_gasita:
-                # Creăm un DataFrame gol cu header-ul pentru Tabelul 2
-                header_tabel_2 = [
-                    "Nr. crt.", "Denumirea lucrărilor / bunurilor/ serviciilor care contribuie substanțial la obiectivele de mediu și egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități – conform sub-criteriilor D1 și D2 din cadrul criteriului de evaluare tehnica D", 
-                    "UM", "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)"
-                ]
-                tabel_2 = pd.DataFrame(columns=header_tabel_2)
-                st.dataframe(tabel_2)  # Afișăm tabelul gol
-            else:
-                st.error("Foaia 'P. FINANCIAR' nu a fost găsită în document.")
+            # Aici va fi codul pentru generarea Tabelului 2, similar cu Tabelul 1
+            pass
+
+    #  alte funcționalități ale aplicației, in progress
 
 if __name__ == "__main__":
     main()
