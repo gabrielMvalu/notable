@@ -4,10 +4,10 @@ import pandas as pd
 from io import BytesIO
 
 def main():
-    st.title("Aplicația mea Streamlit")
+    st.title("Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4")
 
     # Sidebar pentru încărcarea și afișarea logo-ului și textului
-    st.sidebar.title("Încărcare Document")
+    st.sidebar.title("Încărcarea Documentelor")
     logo_path = "LogoSTR.PNG"
     try:
         logo = Image.open(logo_path)
@@ -17,7 +17,7 @@ def main():
     st.sidebar.markdown("<small>© Castemill S.R.L.</small>", unsafe_allow_html=True)
 
     # Încărcarea fișierului în sidebar
-    uploaded_file = st.sidebar.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
+    uploaded_file = st.sidebar.file_uploader("Încarcă documentul '*.xlsx' aici", type="xlsx", accept_multiple_files=False)
 
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
@@ -33,15 +33,15 @@ def main():
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
         
         # Conversie la string pentru a evita erori la concatenare
-        df.iloc[:, 7] = df.iloc[:, 7].astype(str)
+        df.iloc[:, 7] = df.iloc[:, 7].astype(float).round(2)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         df_nou = pd.DataFrame({
             "Nr. crt.": df.iloc[:, 0],
             "Denumirea lucrărilor / bunurilor/ serviciilor": df.iloc[:, 1],
             "UM": "buc",
             "Cantitate": df.iloc[:, 11],
-            "Preţ unitar (fără TVA)": df.iloc[:, 3],
-            "Valoare Totală (fără TVA)": df.iloc[:, 2],
+            "Preţ unitar (fără TVA)": df.iloc[:, 3].astype(float).round(2),
+            "Valoare Totală (fără TVA)": df.iloc[:, 2].astype(float).round(2),
             "Linie bugetară": df.iloc[:, 14],
             "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 7] + " // " + "Neeligibil: " + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
