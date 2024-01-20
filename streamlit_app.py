@@ -43,7 +43,7 @@ def main():
             "Preţ unitar (fără TVA)": df.iloc[:, 3],
             "Valoare Totală (fără TVA)": df.iloc[:, 2],
             "Linie bugetară": df.iloc[:, 14],
-            "Eligibil/ neeligibil": "Eligibil:" + df.iloc[:, 7] + "Neeligibil:" + df.iloc[:, 7],
+            "Eligibil/ neeligibil": "Eligibil:" + df.iloc[:, 7] + " // " + "Neeligibil:" + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
