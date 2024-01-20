@@ -60,7 +60,7 @@ def main():
                 towrite = BytesIO()
                 tabel_1.to_excel(towrite, index=False, engine='openpyxl')
                 towrite.seek(0)  # Merem la începutul stream-ului
-                st.download_button(label="Descarcă Tabelul ca Excel",
+                st.download_button(label="Descarcă Tabelul 1 ca Excel",
                                    data=towrite,
                                    file_name="tabel_prelucrat.xlsx",
                                    mime="application/vnd.ms-excel")
