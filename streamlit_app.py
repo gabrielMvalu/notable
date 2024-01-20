@@ -19,14 +19,22 @@ def main():
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
-    # Buton pentru inițierea prelucrării datelor
-    if st.button("Începe prelucrarea datelor"):
+   # Butoane pentru generarea tabelelor
+    if st.button("Generează Tabel 1"):
         if uploaded_file is not None:
-            # Aici vei adăuga logica pentru prelucrarea datelor
-            st.write("Fișier încărcat: ", uploaded_file.name)
+            # Logica pentru generarea Tabelului 1
+            st.write("Generarea Tabelului 1 în curs...")
+            # Aici va fi logica de prelucrare pentru Tabelul 1
         else:
-            st.error("Te rog să încarci un fișier mai întâi.")
+            st.error("Te rog să încarci un fișier pentru a genera Tabelul 1.")
 
+    if st.button("Generează Tabel 2"):
+        if uploaded_file is not None:
+            # Logica pentru generarea Tabelului 2
+            st.write("Generarea Tabelului 2 în curs...")
+            # Aici va fi logica de prelucrare pentru Tabelul 2
+        else:
+            st.error("Te rog să încarci un fișier pentru a genera Tabelul 2.")
 if __name__ == "__main__":
     main()
 
