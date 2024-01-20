@@ -10,7 +10,8 @@ def main():
     st.title("Aplicația mea Streamlit")
 
     # Încărcarea și afișarea logo-ului
-    logo_path = "calea/către/logo-ul/tău.png" 
+    st.sidebar.title("Încărcare Document")
+    logo_path = "LogoSTR.PNG"  # The logo is assumed to be in the same directory as the script
     logo = Image.open(logo_path)
     st.sidebar.image(logo, use_column_width=True)
   
