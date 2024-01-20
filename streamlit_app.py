@@ -70,7 +70,7 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-        def transforma_date_tabel2(df):
+    def transforma_date_tabel2(df):
         # Inițializăm un DataFrame gol pentru Tabelul 2
         tabel_2 = pd.DataFrame(columns=["Nr. crt.", "Denumire", "UM", "Cantitate", "Preţ unitar (fără TVA)", "Valoare Totală (fără TVA)"])
         
