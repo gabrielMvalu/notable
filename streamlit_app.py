@@ -70,7 +70,7 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-   def transforma_date_tabel2(df):
+    def transforma_date_tabel2(df):
         # Găsim rândul unde coloana 2 are valoarea "Total active corporale"
         total_corporale_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()
         # Dacă găsim valoarea, folosim rândurile de la 2 până la acesta
