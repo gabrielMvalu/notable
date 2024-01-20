@@ -21,7 +21,7 @@ def main():
 
     
    # Funcție pentru verificarea existenței foii "P. FINANCIAR"
-   def verifica_foaia_p_financiar(uploaded_file):
+def verifica_foaia_p_financiar(uploaded_file):
     try:
         # Citim fișierul încărcat direct într-un DataFrame pandas
         df = pd.read_excel(uploaded_file, sheet_name="P. FINANCIAR")
