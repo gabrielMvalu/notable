@@ -13,6 +13,9 @@ def main():
     except IOError:
         st.sidebar.error("Eroare la încărcarea logo-ului.")
 
+    # Adăugarea textului "© CASTEMILL SRL" în sidebar
+    st.sidebar.markdown("<small>© CASTEMILL SRL</small>", unsafe_allow_html=True)
+    
     # Încărcarea fișierului
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
