@@ -20,7 +20,7 @@ def main():
     uploaded_file = st.file_uploader("Încarcă documentul XLSX aici", type="xlsx", accept_multiple_files=False)
 
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
-    stop_text = "Rezervor combustibil"
+    stop_text = "Total proiect"
 
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
@@ -43,7 +43,7 @@ def main():
             "Preţ unitar (fără TVA)": df.iloc[:, 3],
             "Valoare Totală (fără TVA)": df.iloc[:, 2],
             "Linie bugetară": df.iloc[:, 14],
-            "Eligibil/ neeligibil": "Eligibil:" + df.iloc[:, 7] + " // " + "Neeligibil:" + df.iloc[:, 7],
+            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 7] + " // " + "Neeligibil: " + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
