@@ -49,6 +49,7 @@ def main():
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
         # Conversie la string pentru a evita erori la concatenare
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
+        df.iloc[:, 8] = df.iloc[:, 8].astype(str)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         df_nou = pd.DataFrame({
             "Nr. crt.": df.iloc[:, 0],
@@ -58,7 +59,7 @@ def main():
             "Preţ unitar (fără TVA)": df.iloc[:, 3],
             "Valoare Totală (fără TVA)": df.iloc[:, 2],
             "Linie bugetară": df.iloc[:, 14],
-            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 7] + " // " + "Neeligibil: " + df.iloc[:, 7],
+            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 7] + " // " + "Neeligibil: " + df.iloc[:, 8],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
@@ -97,7 +98,8 @@ def main():
     
         # Eliminăm valorile specificate
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
-                              "Rampa mobila", "Total active corporale", "Total active necorporale"]
+                              "Rampa mobila", "Total active corporale", "Total active necorporale", "Toaleta ecologica", 
+                              "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
     
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
