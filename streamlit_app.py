@@ -84,24 +84,23 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
             
- def transforma_date_tabel2(df):
+    def transforma_date_tabel2(df):
         # Găsim primul index unde coloana 2 are valoarea stop_text
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
-    
         # Verificăm dacă indexul există în DataFrame
         if pd.notna(stop_index):
-            # Limităm DataFrame-ul la rândurile de la 4 până la rândul cu stop_text
-            df_filtrat = df.iloc[3:stop_index]
+           # Limităm DataFrame-ul la rândurile de la 4 până la rândul cu stop_text
+           df_filtrat = df.iloc[3:stop_index]
         else:
-            # Dacă stop_text nu este găsit, folosim totul de la rândul 4
-            df_filtrat = df.iloc[3:]
+           # Dacă stop_text nu este găsit, folosim totul de la rândul 4
+           df_filtrat = df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        
-       # Eliminăm valorile specificate
+        # Eliminăm valorile specificate
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
                               "Rampa mobila", "Total active corporale", "Total active necorporale", "Toaleta ecologica", 
                               "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
-       # Creăm un nou DataFrame cu coloanele specificate și datele mapate
+        # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         tabel_2 = pd.DataFrame({
             "Nr. crt.": df_filtrat.iloc[:, 0],
             "Denumire": df_filtrat.iloc[:, 1],
