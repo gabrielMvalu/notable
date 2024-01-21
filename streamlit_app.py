@@ -47,7 +47,7 @@ def main():
             df = df.iloc[3:stop_index[0]]  # Ignorăm primele 3 rânduri și oprim la stop_text
         else:
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
-        # Conversie la string pentru a evita erori la concatenare
+        df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]        # Conversie la string pentru a evita erori la concatenare
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
@@ -95,8 +95,7 @@ def main():
         else:
             # Dacă stop_text nu este găsit, folosim totul de la rândul 4
             df_filtrat = df.iloc[3:]
-    
-        # Eliminăm valorile specificate
+        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        # Eliminăm valorile specificate
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
                               "Rampa mobila", "Total active corporale", "Total active necorporale", "Toaleta ecologica", 
                               "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
