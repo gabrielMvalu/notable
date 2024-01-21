@@ -9,7 +9,7 @@ def main():
         <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
         .title {
-            color: #0078D4; /* A modern shade of blue */
+            color: #7FBBE9; /* A modern shade of blue */
             font-family: 'Roboto', sans-serif; /* Roboto is a modern and clean font */
             font-size: 30px; /* Adjust the size as needed */
             font-weight: 700; /* 700 is for bold text */
