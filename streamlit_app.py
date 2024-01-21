@@ -48,8 +48,8 @@ def main():
         else:
             df = df.iloc[3:]  # Dacă stop_text nu este găsit, folosim totul de la rândul 4
         # Conversie la string pentru a evita erori la concatenare
+        df.iloc[:, 6] = df.iloc[:, 6].astype(str)
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
-        df.iloc[:, 8] = df.iloc[:, 8].astype(str)
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         df_nou = pd.DataFrame({
             "Nr. crt.": df.iloc[:, 0],
@@ -59,7 +59,7 @@ def main():
             "Preţ unitar (fără TVA)": df.iloc[:, 3],
             "Valoare Totală (fără TVA)": df.iloc[:, 2],
             "Linie bugetară": df.iloc[:, 14],
-            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 7] + " // " + "Neeligibil: " + df.iloc[:, 8],
+            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 6] + " // " + "Neeligibil: " + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
