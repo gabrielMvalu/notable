@@ -4,9 +4,26 @@ import pandas as pd
 from io import BytesIO
 
 def main():
+    
     st.markdown("""
-    <h1 style='color: blue; font-size: 24px;'>Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4</h1>
-    """, unsafe_allow_html=True)
+        <style>
+        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+        .title {
+            color: #0078D4; /* A modern shade of blue */
+            font-family: 'Roboto', sans-serif; /* Roboto is a modern and clean font */
+            font-size: 30px; /* Adjust the size as needed */
+            font-weight: 700; /* 700 is for bold text */
+            text-align: center; /* Center align for modern aesthetics */
+            margin-bottom: 20px; /* Add some space below the title */
+        }
+        </style>
+    
+        <h1 class='title'>Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4</h1>
+        """, unsafe_allow_html=True)
+
+
+
+    
     # Sidebar pentru încărcarea și afișarea logo-ului și textului
     st.sidebar.title("Încărcarea Documentelor")
     logo_path = "LogoSTR.PNG"
