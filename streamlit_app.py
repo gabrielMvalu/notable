@@ -113,30 +113,16 @@ def main():
             partea_de_jos = df_filtrat.iloc[cursuri_index[0]:]
             df_filtrat = pd.concat([partea_de_sus, toaleta_row.to_frame().T, partea_de_jos])
     
-     # Index pentru rândul 'Cursuri instruire personal'
-        cursuri_index = df.index[df['Denumire'].str.contains("Cursuri instruire personal", na=False)].tolist()
-        if cursuri_index:
-            cursuri_index = cursuri_index[-1]  # luăm ultimul index, dacă sunt mai multe
-        else:
-            cursuri_index = len(tabel_2)  # sau adăugăm la sfârșit dacă nu există
+        # Creăm DataFrame-ul final
+        tabel_2 = pd.DataFrame({
+            "Nr. crt.": df_filtrat.iloc[:, 0],
+            "Denumire": df_filtrat.iloc[:, 1],
+            "UM": df_filtrat.iloc[:, 2],
+            "Cantitate": df_filtrat.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 4]
+        }).reset_index(drop=True)
     
-        # Rânduri noi de inserat
-        randuri_noi = [
-            {"Denumire": "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu"},
-            {"Denumire": "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse"},
-            # ... (alte rânduri dacă este necesar)
-        ]
-    
-        # Convertim lista de dicționare în DataFrame și resetăm indexul
-        randuri_noi_df = pd.DataFrame(randuri_noi).reset_index(drop=True)
-    
-        # Despărțim tabelul original în două la indexul cursuri_index
-        partea_de_sus = tabel_2.iloc[:cursuri_index+1, :]
-        partea_de_jos = tabel_2.iloc[cursuri_index+1:, :]
-    
-        # Concatenăm cele două părți cu noile rânduri între ele
-        tabel_2 = pd.concat([partea_de_sus, randuri_noi_df, partea_de_jos], ignore_index=True).reset_index(drop=True)
-        
         return tabel_2
     
     # Butoane pentru generarea tabelelor în sidebar
