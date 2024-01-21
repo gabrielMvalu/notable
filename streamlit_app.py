@@ -83,7 +83,7 @@ def main():
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
-
+            
     def transforma_date_tabel2(df):
         # Găsim primul index unde coloana 2 are valoarea stop_text
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
@@ -95,18 +95,17 @@ def main():
         else:
             # Dacă stop_text nu este găsit, folosim totul de la rândul 4
             df_filtrat = df.iloc[3:]
-    
-        # Salvăm informațiile pentru "Toaleta ecologica"
+        
+        # Separăm informațiile pentru "Toaleta ecologica"
         toaleta_info = df_filtrat[df_filtrat.iloc[:, 1] == "Toaleta ecologica"]
     
         # Eliminăm valorile specificate
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
                               "Rampa mobila", "Total active corporale", "Total active necorporale", 
-                              "Toaleta ecologica", "Publicitate", "Consultanta management", 
-                              "Consultanta achizitii", "Consultanta scriere"]
+                              "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
     
-        # Creăm un nou DataFrame cu coloanele specificate și datele mapate
+        # Creăm tabelul fără "Toaleta ecologica"
         tabel_2 = pd.DataFrame({
             "Nr. crt.": df_filtrat.iloc[:, 0],
             "Denumire": df_filtrat.iloc[:, 1],
@@ -115,13 +114,15 @@ def main():
             "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 3],
             "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 4]
         })
-        # Introducem rândul "Toaleta ecologica" în locul corect în DataFrame
-        # Presupunem că trebuie adăugat înainte de "Cursuri instruire personal"
-        index_cursuri = tabel_2[tabel_2['Denumire'] == "Cursuri instruire personal"].index.min()
-        tabel_2 = pd.concat([tabel_2.iloc[:index_cursuri], toaleta_info, tabel_2.iloc[index_cursuri:]]).reset_index(drop=True)
+    
+        # Reintroducem "Toaleta ecologica" după filtrare
+        if not toaleta_info.empty:
+            tabel_2 = pd.concat([tabel_2, toaleta_info]).reset_index(drop=True)
+    
+        # Sortăm tabelul dacă este necesar, în funcție de "Nr. crt." sau o altă coloană logică
+        tabel_2 = tabel_2.sort_values(by="Nr. crt.").reset_index(drop=True)
     
         return tabel_2
-
 
 
        # Butoane pentru generarea tabelelor în sidebar
