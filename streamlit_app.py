@@ -4,7 +4,9 @@ import pandas as pd
 from io import BytesIO
 
 def main():
-    st.title("Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4")
+   st.markdown("""
+    <h1 style='color: blue; font-size: 24px;'>Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4</h1>
+    """, unsafe_allow_html=True)
     # Sidebar pentru încărcarea și afișarea logo-ului și textului
     st.sidebar.title("Încărcarea Documentelor")
     logo_path = "LogoSTR.PNG"
