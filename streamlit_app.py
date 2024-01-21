@@ -10,7 +10,7 @@ def main():
         @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
         .title {
             color: #7FBBE9; /* A modern shade of blue */
-            font-family: 'Roboto', sans-serif; /* Roboto is a modern and clean font */
+            font-family: 'Comic Sans MS', cursive, sans-serif; /* Comic Sans MS with fallbacks */
             font-size: 30px; /* Adjust the size as needed */
             font-weight: 700; /* 700 is for bold text */
             text-align: center; /* Center align for modern aesthetics */
