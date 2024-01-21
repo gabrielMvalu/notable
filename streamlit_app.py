@@ -83,7 +83,7 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-    def transforma_date_tabel2(df, stop_text="Total proiect"):
+    def transforma_date_tabel2(df):
         # Găsim primul index unde coloana 2 are valoarea stop_text
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
     
