@@ -84,50 +84,46 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-     
-
-    def procesare_date_tabel2(df):
-        # Identificăm rândurile specifice din P. FINANCIAR
-        index_corporale = df.index[df.iloc[:, 1].str.contains("Total active corporale")].tolist()[0]
-        index_necorporale = df.index[df.iloc[:, 1].str.contains("Total active necorporale")].tolist()[0]
-        
-        # Extragem rândurile dintre cele două totaluri și eliminăm valorile nedorite și rândurile goale
-        df_filtrat = df.iloc[3:index_corporale]
-        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
-        valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
-                              "Rampa mobila", "Total active corporale", "Total active necorporale", 
-                              "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
-        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
-        
-        # Calculăm subtotalul pentru cheltuielile ce contribuie la obiectivele de mediu
-        subtotal_mediu = df_filtrat['Valoare Totală (fără TVA)'].sum()
     
-        # Extragem și procesăm rândurile de după 'Total active corporale' până la 'Total active necorporale'
-        df_egalitate = df.iloc[index_corporale + 1:index_necorporale]
-        df_egalitate = df_egalitate[df_egalitate.iloc[:, 1].str.contains("Cursuri instruire personal|Toaleta ecologica")]
-        df_egalitate = df_egalitate[df_egalitate.iloc[:, 1].notna() & (df_egalitate.iloc[:, 1] != 0) & (df_egalitate.iloc[:, 1] != '-')]
+    def aranjeaza_coloana_2(df):
+        # Identificăm rândurile pentru 'Total active corporale' și 'Total active necorporale'
+        index_corporale_start = 3  # Presupunem că datele încep de la rândul 4
+        index_corporale_end = df.index[df.iloc[:, 1].str.contains("Total active corporale", na=False)].tolist()[0]
+        index_necorporale_end = df.index[df.iloc[:, 1].str.contains("Total active necorporale", na=False)].tolist()[0]
         
-        # Calculăm subtotalul pentru cheltuielile ce contribuie la egalitatea de șanse
-        subtotal_egalitate = df_egalitate['Valoare Totală (fără TVA)'].sum()
+        # Extragem și păstrăm datele relevante
+        df_corporale = df.iloc[index_corporale_start:index_corporale_end]
+        df_necorporale = df.iloc[index_corporale_end + 1:index_necorporale_end]
     
-        # Calculăm totalul valorilor eligibile ale proiectului
-        total_eligibil = subtotal_mediu + subtotal_egalitate
+        # Filtrăm valorile goale și nedorite
+        df_corporale = df_corporale[df_corporale.iloc[:, 1].notna() & (df_corporale.iloc[:, 1] != 0) & (df_corporale.iloc[:, 1] != '-')]
+        df_necorporale = df_necorporale[df_necorporale.iloc[:, 1].notna() & (df_necorporale.iloc[:, 1] != 0) & (df_necorporale.iloc[:, 1] != '-')]
     
-        # Creăm DataFrame-ul cu structura dorită
-        tabel_final = pd.concat([
-            df_filtrat, 
-            pd.DataFrame([{'Denumire': 'Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu', 'Valoare Totală (fără TVA)': subtotal_mediu}]), 
-            df_egalitate, 
-            pd.DataFrame([{'Denumire': 'Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse', 'Valoare Totală (fără TVA)': subtotal_egalitate}]), 
-            pd.DataFrame([{'Denumire': 'Valoare totala eligibila proiect', 'Valoare Totală (fără TVA)': total_eligibil}])
-        ], ignore_index=True)
+        # Creăm lista cu valorile de eliminat
+        valori_de_eliminat = [
+            "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
+            "Rampa mobila", "Publicitate", "Consultanta management", 
+            "Consultanta achizitii", "Consultanta scriere"
+        ]
+    
+        # Eliminăm valorile nedorite din grupuri
+        df_corporale = df_corporale[~df_corporale.iloc[:, 1].isin(valori_de_eliminat)]
+        df_necorporale = df_necorporale[~df_necorporale.iloc[:, 1].isin(valori_de_eliminat)]
+    
+        # Creăm DataFrame-ul final cu coloana 2 aranjată
+        tabel_final = pd.concat([df_corporale, df_necorporale]).reset_index(drop=True)
+    
+        # Adăugăm rândurile pentru subtotaluri și totaluri în locurile specificate
+        # Vom adăuga valorile pentru aceste rânduri mai târziu, în prezent ne concentrăm pe structura coloanei
+        tabel_final = tabel_final.append({"Denumire": "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu"}, ignore_index=True)
+        tabel_final = tabel_final.append({"Denumire": "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse"}, ignore_index=True)
+        tabel_final = tabel_final.append({"Denumire": "Valoare totala eligibila proiect"}, ignore_index=True)
     
         return tabel_final
     
-    # Presupunând că 'df' este DataFrame-ul încărcat din foaia de calcul P. FINANCIAR
-    df = pd.read_excel('P_FINANCIAR.xlsx')  # Acesta este doar un exemplu, folosiți calea corectă a fișierului
-    tabel_final = procesare_date_tabel2(df)
-        
+    # Presupunem că 'df' este DataFrame-ul încărcat din foaia de calcul P. FINANCIAR
+    # df = pd.read_excel('P_FINANCIAR.xlsx')  # Acesta este doar un exemplu, folosiți calea corectă a fișierului
+    # tabel_final = aranjeaza_coloana_2(df)
     
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
