@@ -7,7 +7,7 @@ def main():
     
     st.markdown("""
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nabla&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
         .title {
             color: #7FBBE9; /* A modern shade of blue */
             font-family: 'Roboto', sans-serif; /* Roboto is a modern and clean font */
