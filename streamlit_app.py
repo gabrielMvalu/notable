@@ -83,36 +83,48 @@ def main():
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
-            
+                
     def transforma_date_tabel2(df):
-        # Găsim primul index unde coloana 2 are valoarea stop_text
+        # Identificăm rândul cu 'Total Proiect' și extragem datele relevante
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
-        # Verificăm dacă indexul există în DataFrame
-        if pd.notna(stop_index):
-           # Limităm DataFrame-ul la rândurile de la 4 până la rândul cu stop_text
-           df_filtrat = df.iloc[3:stop_index]
-        else:
-           # Dacă stop_text nu este găsit, folosim totul de la rândul 4
-           df_filtrat = df.iloc[3:]
-        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        
-        # Eliminăm valorile specificate
+        df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
+        
+        # Eliminăm valorile nedorite, dar păstrăm 'Toaleta ecologica' în DataFrame
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
-                              "Rampa mobila", "Total active corporale", "Total active necorporale", "Toaleta ecologica", 
+                              "Rampa mobila", "Total active corporale", "Total active necorporale", 
                               "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
-        # Creăm un nou DataFrame cu coloanele specificate și datele mapate
+    
+        # Verificăm dacă 'Cursuri instruire personal' există în DataFrame
+        cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
+        toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
+        
+        # Dacă ambele există, schimbăm ordinea
+        if cursuri_index and toaleta_index:
+            # Salvați rândul 'Toaleta ecologica'
+            toaleta_row = df_filtrat.loc[toaleta_index[0]]
+            
+            # Eliminați 'Toaleta ecologica' din locația curentă
+            df_filtrat = df_filtrat.drop(toaleta_index)
+            
+            # Introduceți 'Toaleta ecologica' înaintea rândului 'Cursuri instruire personal'
+            partea_de_sus = df_filtrat.iloc[:cursuri_index[0]]
+            partea_de_jos = df_filtrat.iloc[cursuri_index[0]:]
+            df_filtrat = pd.concat([partea_de_sus, toaleta_row.to_frame().T, partea_de_jos])
+    
+        # Creăm DataFrame-ul final
         tabel_2 = pd.DataFrame({
             "Nr. crt.": df_filtrat.iloc[:, 0],
             "Denumire": df_filtrat.iloc[:, 1],
-            "UM": "buc",
+            "UM": df_filtrat.iloc[:, 2],
             "Cantitate": df_filtrat.iloc[:, 11],
             "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 3],
             "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 4]
-        })
+        }).reset_index(drop=True)
     
-        return tabel_2 
+        return tabel_2
 
-
+    
        # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
