@@ -85,7 +85,7 @@ def main():
             st.error("Te rog să încarci un fișier.")
 
     
-    def aranjeaza_coloana_2(df):
+    def transforma_date_tabel2(df):
         # Identificăm rândurile pentru 'Total active corporale' și 'Total active necorporale'
         index_corporale_start = 3  # Presupunem că datele încep de la rândul 4
         index_corporale_end = df.index[df.iloc[:, 1].str.contains("Total active corporale", na=False)].tolist()[0]
