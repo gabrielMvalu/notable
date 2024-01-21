@@ -87,14 +87,16 @@ def main():
         # Găsim rândul unde coloana 2 are valoarea stop_text
         stop_index = df.index[df.iloc[:, 1] == stop_text].tolist()
     
-        # Dacă găsim valoarea, folosim rândurile de la 4 până la acesta
+        # Verificăm dacă avem rândul cu stop_text în DataFrame
         if stop_index:
-            df_filtrat = df.iloc[3:stop_index[0]]  # Selecția datelor
+            # Selectăm rândurile de la al patrulea rând și până la rândul cu stop_text
+            df_filtrat = df.iloc[3:stop_index[0]]
         else:
-            df_filtrat = df.iloc[3:]  # Dacă stop_text nu este găsit
+            # Dacă stop_text nu este găsit, folosim totul de la rândul 4
+            df_filtrat = df.iloc[3:]
     
         # Eliminăm valorile specificate
-        valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati", 
+        valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
                               "Rampa mobila", "Total active corporale", "Total active necorporale"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
     
@@ -109,6 +111,7 @@ def main():
         })
     
         return tabel_2
+
 
        # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
