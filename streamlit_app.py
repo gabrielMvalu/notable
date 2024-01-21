@@ -85,7 +85,7 @@ def main():
 
     def transforma_date_tabel2(df, stop_text="Total Proiect"):
         # Găsim indexul rândului unde coloana 2 are valoarea stop_text
-        stop_index = df.index[df.iloc[:, 1] == stop_text].tolist()
+        stop_index = df.index[df.iloc[:, 1] = stop_text].tolist()
     
         # Verificăm dacă avem rândul cu stop_text în DataFrame
         if stop_index:
