@@ -84,12 +84,12 @@ def main():
             st.error("Te rog să încarci un fișier.")
 
     def transforma_date_tabel2(df, stop_text="Total Proiect"):
-        # Găsim rândul unde coloana 2 are valoarea stop_text
+        # Găsim indexul rândului unde coloana 2 are valoarea stop_text
         stop_index = df.index[df.iloc[:, 1] == stop_text].tolist()
     
         # Verificăm dacă avem rândul cu stop_text în DataFrame
         if stop_index:
-            # Selectăm rândurile de la al patrulea rând și până la rândul cu stop_text
+            # Limităm DataFrame-ul la rândurile de la 4 până la rândul cu stop_text
             df_filtrat = df.iloc[3:stop_index[0]]
         else:
             # Dacă stop_text nu este găsit, folosim totul de la rândul 4
