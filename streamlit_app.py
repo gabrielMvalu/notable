@@ -22,7 +22,6 @@ def main():
         """, unsafe_allow_html=True)
 
 
-
     
     # Sidebar pentru încărcarea și afișarea logo-ului și textului
     st.sidebar.title("Încărcarea Documentelor")
@@ -37,6 +36,8 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Încarcă documentul '*.xlsx' aici", type="xlsx", accept_multiple_files=False)
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
+
+    
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
         # Găsim rândul unde coloana 2 are valoarea stop_text
@@ -61,6 +62,7 @@ def main():
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
+        
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 1"):
         if uploaded_file is not None:
@@ -82,22 +84,29 @@ def main():
             st.error("Te rog să încarci un fișier.")
 
     def transforma_date_tabel2(df):
-        # Găsim rândul unde coloana 2 are valoarea "Total active corporale"
-        total_corporale_index = df.index[df.iloc[:, 1] == "Total active corporale"].tolist()
-        # Dacă găsim valoarea, folosim rândurile de la 2 până la acesta
-        if total_corporale_index:
-            df = df.iloc[3:total_corporale_index[0]]  # Presupunem că header-ul este pe prima linie
+        # Găsim rândul unde coloana 2 are valoarea "Total Proiect"
+        total_proiect_index = df.index[df.iloc[:, 1] == "Total Proiect"].tolist()
+        # Selectăm rândurile de la 4 până la "Total Proiect"
+        if total_proiect_index:
+            df_filtrat = df.iloc[3:total_proiect_index[0]]  # Selecția datelor
         else:
-            df = df.iloc[3:]  # Dacă "Total active corporale" nu este găsit
+            df_filtrat = df.iloc[3:]  # Dacă "Total Proiect" nu este găsit
+    
+        # Eliminăm valorile specificate
+        valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati", 
+                              "Rampa mobila", "Total active corporale", "Total active necorporale"]
+        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
+    
         # Creăm un nou DataFrame cu coloanele specificate și datele mapate
         tabel_2 = pd.DataFrame({
-            "Nr. crt.": df.iloc[:, 0],
-            "Denumire": df.iloc[:, 1],
+            "Nr. crt.": df_filtrat.iloc[:, 0],
+            "Denumire": df_filtrat.iloc[:, 1],
             "UM": "buc",
-            "Cantitate": df.iloc[:, 11],
-            "Preţ unitar (fără TVA)": df.iloc[:, 3],
-            "Valoare Totală (fără TVA)": df.iloc[:, 4]
+            "Cantitate": df_filtrat.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 4]
         })
+    
         return tabel_2
 
        # Butoane pentru generarea tabelelor în sidebar
