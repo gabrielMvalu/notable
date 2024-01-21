@@ -34,10 +34,10 @@ def main():
     st.sidebar.markdown("<small>© Castemill S.R.L.</small>", unsafe_allow_html=True)
     # Încărcarea fișierului în sidebar
     uploaded_file = st.sidebar.file_uploader("Încarcă documentul '*.xlsx' aici", type="xlsx", accept_multiple_files=False)
-    # Textul care marchează sfârșitul datelor relevante și începutul extracției
-    stop_text = "Total proiect"
 
     
+    # Textul care marchează sfârșitul datelor relevante și începutul extracției
+    stop_text = "Total proiect"
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
         # Găsim rândul unde coloana 2 are valoarea stop_text
@@ -83,14 +83,15 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-    def transforma_date_tabel2(df):
-        # Găsim rândul unde coloana 2 are valoarea "Total Proiect"
-        total_proiect_index = df.index[df.iloc[:, 1] == "Total Proiect"].tolist()
-        # Selectăm rândurile de la 4 până la "Total Proiect"
-        if total_proiect_index:
-            df_filtrat = df.iloc[3:total_proiect_index[0]]  # Selecția datelor
+    def transforma_date_tabel2(df, stop_text="Total Proiect"):
+        # Găsim rândul unde coloana 2 are valoarea stop_text
+        stop_index = df.index[df.iloc[:, 1] == stop_text].tolist()
+    
+        # Dacă găsim valoarea, folosim rândurile de la 4 până la acesta
+        if stop_index:
+            df_filtrat = df.iloc[3:stop_index[0]]  # Selecția datelor
         else:
-            df_filtrat = df.iloc[3:]  # Dacă "Total Proiect" nu este găsit
+            df_filtrat = df.iloc[3:]  # Dacă stop_text nu este găsit
     
         # Eliminăm valorile specificate
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati", 
