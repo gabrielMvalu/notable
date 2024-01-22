@@ -166,9 +166,26 @@ def main():
                 subtotal_1 += row[5]  # Suma valorilor pentru coloana 'Valoare Totală'
             if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
                 subtotal_2 += row[5]
-            
-       
-        # Process each item and handle special cases for additional text entries
+                
+            if item not in ["Toaleta ecologica", "Cursuri instruire personal"]:
+                # Adăugați subtotal_1
+                nr_crt.append("Subtotal 1")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
+                um.append(None)
+                cantitate.append(None)
+                pret_unitar.append(None)
+                valoare_totala.append(subtotal_1)
+
+            if item in ["Toaleta ecologica", "Cursuri instruire personal"]:
+                # Adăugați subtotal_2
+                nr_crt.append("Subtotal 2")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
+                um.append(None)
+                cantitate.append(None)
+                pret_unitar.append(None)
+                valoare_totala.append(subtotal_2)       
+                # Process each item and handle special cases for additional text entries
+        
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
     
