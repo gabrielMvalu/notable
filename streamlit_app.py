@@ -119,52 +119,46 @@ def main():
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
     
-        # Define the items to exclude
+        # Define items to exclude, keeping 'Cursuri instruire personal' and 'Toaleta ecologica'
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale",
             "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
         ]
-        
-        # Initialize 'Nr. crt.' counter
-        nr_crt_counter = 1
-        
-        # Include 'Cursuri instruire personal' and 'Toaleta ecologica' but exclude other unwanted values
-        df_filtrat = df_filtrat[(~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)) | (df_filtrat.iloc[:, 1].isin(["Cursuri instruire personal", "Toaleta ecologica"]))].reset_index(drop=True)
+        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
+    
+        # Reorder 'Toaleta ecologica' and 'Cursuri instruire personal'
+        toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
+        cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
+        if cursuri_index and toaleta_index:
+            toaleta_row = df_filtrat.loc[toaleta_index[0]]
+            df_filtrat = df_filtrat.drop(toaleta_index)
+            df_filtrat = pd.concat([df_filtrat.iloc[:cursuri_index[0]], toaleta_row.to_frame().T, df_filtrat.iloc[cursuri_index[0]:]])
     
         # Initialize 'Nr. crt.' counter and 'Denumire' list
         nr_crt = []
         denumire = []
     
-        # Process each item and handle special cases for subtotals and 'Cursuri instruire personal' and 'Toaleta ecologica'
-        for i, row in enumerate(df_filtrat.itertuples(), 1):
-            # Using row.Index to get the proper item based on the current DataFrame structure
-            item = df_filtrat.at[row.Index, df_filtrat.columns[1]]
-            
+        # Process each item, handle special cases for subtotals
+        nr_crt_counter = 1
+        for item in df_filtrat.iloc[:, 1]:
             if item == "Cursuri instruire personal":
-                # Reset the counter after 'Cursuri instruire personal'
-                nr_crt_counter = 1  
-            elif item == "Toaleta ecologica":
-                # Reset the counter after 'Toaleta ecologica'
-                nr_crt_counter = 1
-    
-            # Check if we need to add subtotal
-            if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
-                # Add the item itself before subtotal
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
-                nr_crt_counter += 1
-    
-                # Add subtotal entry
-                nr_crt.append("Subtotal " + ("1" if item == "Cursuri instruire personal" else "2"))
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la " + 
-                                ("obiectivele de mediu" if item == "Cursuri instruire personal" else "egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități"))
+                nr_crt.append("Subtotal 1")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
+                nr_crt_counter = 1  # Reset counter after 'Cursuri instruire personal'
+            elif item == "Toaleta ecologica":
+                nr_crt.append(nr_crt_counter)
+                denumire.append(item)
+                nr_crt.append("Subtotal 2")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
             else:
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
                 nr_crt_counter += 1
     
-        # Append the 'Valoare totala eligibila proiect' and 'Pondere' without a 'Nr. crt.'
+        # Add the 'Valoare totala eligibila proiect' and 'Pondere' rows
         nr_crt.extend([None, "Pondere", "Pondere"])
         denumire.extend([
             "Valoare totala eligibila proiect",
@@ -179,6 +173,7 @@ def main():
         })
         
         return tabel_2
+
 
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
