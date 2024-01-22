@@ -217,7 +217,7 @@ def main():
         um.extend([None, None, None, None, None])
         cantitate.extend([None, None, None, None, None])
         pret_unitar.extend([None, None, None, None, None])
-        valoare_totala.extend([subtotal_1, Subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_2/val_total_proiect])
+        valoare_totala.extend([subtotal_1, subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_2/val_total_proiect])
     
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
