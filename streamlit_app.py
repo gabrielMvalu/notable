@@ -114,27 +114,35 @@ def main():
                st.error("Te rog să încarci un fișier.")
                       
     def transforma_date_tabel2(df):
+        # Verificăm dacă coloanele necesare există în DataFrame
+        coloane_necesare = ['Denumire', 'UM', 'Cantitate', 'Pret Unitar', 'Valoare', 'Linie Bugetara']
+        for col in coloane_necesare:
+            if col not in df.columns:
+                raise ValueError(f"Coloana '{col}' lipsește din datele încărcate.")
+    
         # Preluarea index-ului unde se află textul stop_text
         stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
         if stop_index:
             df_filtrat = df.iloc[3:stop_index[0]]
         else:
             df_filtrat = df.iloc[3:]
-        
+    
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
     
         # Excluderea anumitor valori
-        valori_de_exclus = [  "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
+        valori_de_exclus = [
+            "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale", 
-            "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
-        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_exclus)]
+            "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
+        ]
+        df_filtrat = df_filtrat[~df_filtrat['Denumire'].isin(valori_de_exclus)]
     
         # Inițializarea listelor pentru coloane
         nr_crt, denumiri, UM, cantitati, preturi_unitare, valori_totale, linii_bugetare = [], [], [], [], [], [], []
     
         # Calculul subtotalurilor
-        subtotal_1 = df_filtrat[df_filtrat['denumiri'].str.contains('criteriu 1')]['Valoare'].sum()
-        subtotal_2 = df_filtrat[df_filtrat['denumiri'].str.contains('criteriu 2')]['Valoare'].sum()
+        subtotal_1 = df_filtrat[df_filtrat['Denumire'].str.contains('criteriu 1')]['Valoare'].sum()
+        subtotal_2 = df_filtrat[df_filtrat['Denumire'].str.contains('criteriu 2')]['Valoare'].sum()
     
         # Procesarea fiecărui rând
         for idx, row in df_filtrat.iterrows():
@@ -177,6 +185,7 @@ def main():
         })
     
         return tabel_2
+
 
 
 
