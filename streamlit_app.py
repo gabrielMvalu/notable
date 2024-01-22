@@ -112,12 +112,11 @@ def main():
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
-        
-    def transforma_date_tabel2(df):
+            
+     def transforma_date_tabel2(df):
         # Extract relevant data up to 'Total Proiect'
         stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
-
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        # Define the items to exclude
         
         valori_de_eliminat = [
@@ -126,57 +125,54 @@ def main():
             "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
         ]
         
-        # Filter out the unwanted values
-        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)].reset_index(drop=True)
+        # Filter out the unwanted values, but keep 'Cursuri instruire personal' and 'Toaleta ecologica'
+        df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat) | df_filtrat.iloc[:, 1].isin(["Cursuri instruire personal", "Toaleta ecologica"])].reset_index(drop=True)
         
         # Initialize 'Nr. crt.' counter and 'Denumire' list
         nr_crt_counter = 1
         nr_crt = []
         denumire = []
         
+        # Flags to add subtotals only once
+        subtotal1_added = False
+        subtotal2_added = False
+        
         # Process each item and handle special cases for subtotals and 'Cursuri instruire personal' and 'Toaleta ecologica'
         for item in df_filtrat.iloc[:, 1]:
-            if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
+            if item == "Cursuri instruire personal" and not subtotal1_added:
+                # Add Subtotal 1 before Cursuri instruire personal
+                nr_crt.append("Subtotal 1")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
+                subtotal1_added = True
+                nr_crt_counter = 1  # Reset the counter after subtotal 1
+            elif item == "Toaleta ecologica" and not subtotal2_added:
+                # Add Subtotal 2 after Toaleta ecologica
+                nr_crt.append(nr_crt_counter)
+                denumire.append("Toaleta ecologica")
+                nr_crt.append("Subtotal 2")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
+                subtotal2_added = True
+                nr_crt_counter = 1  # Reset the counter after subtotal 2
+            else:
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
                 nr_crt_counter += 1
-            elif item == "Cursuri instruire personal":
-                denumire.append(item)
-                nr_crt.append(nr_crt_counter)
-                nr_crt_counter = 1  # Reset the counter after 'Cursuri instruire personal'
-            elif item == "Toaleta ecologica":
-                denumire.append(item)
-                nr_crt.append(nr_crt_counter)
         
-        # Insert subtotals and 'Pondere' rows
-        denumire.extend([
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu",
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități",
-            "Valoare totala eligibila proiect",
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu/ Valoare totala eligibila proiect",
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități/ Valoare totala eligibila proiect"
-        ])
-        
-        nr_crt.extend([
-            "Subtotal 1",
-            "Subtotal 2",
-            None,  # No 'Nr. crt.' for final value row
-            "Pondere",
-            "Pondere"
-        ])
+        # Add the final 'Valoare totala eligibila proiect' without a number
+        nr_crt += [None, "Pondere", "Pondere"]
+        denumire += ["Valoare totala eligibila proiect",
+                     "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu/ Valoare totala eligibila proiect",
+                     "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități/ Valoare totala eligibila proiect"]
         
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
             "Nr. crt.": nr_crt,
             "Denumire": denumire
-            # The other columns will be handled as per additional logic provided later
         })
         
         return tabel_2
     
-    # Usage example:
-    # tabel_2 = transforma_date_tabel2(df, 'Total proiect')
-        
+            
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
