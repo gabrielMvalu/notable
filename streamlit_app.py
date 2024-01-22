@@ -155,7 +155,7 @@ def main():
             # Calculate subtotals within the loop to avoid scope issues
             if 'subtotal_1' not in locals():
                 subtotal_1 = df_filtrat.loc[
-                    df_filtrat['Denumire'].isin([
+                    df_filtrat['denumire'].isin([
                         "Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", 
                         "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"
                     ]), 
@@ -164,7 +164,7 @@ def main():
             
             if 'subtotal_2' not in locals():
                 subtotal_2 = df_filtrat.loc[
-                    df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 
+                    df_filtrat['denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 
                     'Valoare Totală (fără TVA)'
                 ].sum()
                
