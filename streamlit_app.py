@@ -118,18 +118,7 @@ def main():
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
-
-        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
-        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
-
-        total_proiect_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index
-        if not total_proiect_index.empty:
-            valoare_totala_eligibila = df.iloc[total_proiect_index[0], 5]
-        else:
-            valoare_totala_eligibila = 0  # Sau o valoare implicită, dacă 'Total proiect' nu există
-
-        
-        
+ 
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale", 
@@ -152,8 +141,18 @@ def main():
         cantitate = []
         pret_unitar = []
         valoare_totala = []
-    
+
+        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
+        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
+
+        total_proiect_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index
+        if not total_proiect_index.empty:
+            valoare_totala_eligibila = df.iloc[total_proiect_index[0], 5]
+        else:
+            valoare_totala_eligibila = 0  
+            # Sau o valoare implicită, dacă 'Total proiect' nu există         
         # Process each item and handle special cases for additional text entries
+        
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
     
