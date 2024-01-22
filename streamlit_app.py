@@ -118,7 +118,8 @@ def main():
         stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         
-        # Define the items to exclude
+        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        # Define the items to exclude
+        
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale",
