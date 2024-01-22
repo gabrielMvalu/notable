@@ -114,42 +114,69 @@ def main():
                st.error("Te rog să încarci un fișier.")
             
     def transforma_date_tabel2(df):
-        # Extragere și filtrare date
-        stop_index = df[df.iloc[:, 1] == stop_text].index.min()
+        # Extract relevant data up to 'Total Proiect'
+        stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
     
-        # Reordonare elemente speciale
-        cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
-        toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
-        if cursuri_index and toaleta_index:
-            toaleta_row = df_filtrat.loc[toaleta_index[0]]
-            df_filtrat = df_filtrat.drop(toaleta_index)
-            partea_de_sus = df_filtrat.iloc[:cursuri_index[0]]
-            partea_de_jos = df_filtrat.iloc[cursuri_index[0]:]
-            df_filtrat = pd.concat([partea_de_sus, toaleta_row.to_frame().T, partea_de_jos]).reset_index(drop=True)
+        # Define the items to exclude
+        valori_de_eliminat = [
+            "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
+            "Rampa mobila", "Total active corporale", "Total active necorporale",
+            "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
+        ]
+        
+        # Include 'Cursuri instruire personal' and 'Toaleta ecologica' but exclude other unwanted values
+        df_filtrat = df_filtrat[(~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)) | (df_filtrat.iloc[:, 1].isin(["Cursuri instruire personal", "Toaleta ecologica"]))].reset_index(drop=True)
     
-        # Adaugă aici logica pentru calculul subtotalurilor și ponderilor
-        # De exemplu, adaugă subtotaluri după 'Toaleta ecologica' și 'Cursuri instruire personal'
-        # ...
+        # Initialize 'Nr. crt.' counter and 'Denumire' list
+        nr_crt = []
+        denumire = []
     
-        # Crearea DataFrame-ului final
-        tabel_2 = pd.DataFrame({
-            "Nr. crt.": range(1, len(df_filtrat) + 1),
-            "Denumire": df_filtrat.iloc[:, 1],
-            "UM": df_filtrat.iloc[:, 2],
-            "Cantitate": df_filtrat.iloc[:, 3],
-            "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 4],
-            "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 5]
-        })
-    
-        return tabel_2
-    
-    # Aici ar trebui să adaugi codul pentru a citi DataFrame-ul inițial
-    # df = pd.read_csv('calea_catre_fisierul_tău.csv') sau orice altă metodă de a obține DataFrame-ul
-    # tabel_2 = transforma_date_tabel2(df)
-    # print(tabel_2)
+        # Process each item and handle special cases for subtotals and 'Cursuri instruire personal' and 'Toaleta ecologica'
+        for i, row in enumerate(df_filtrat.itertuples(), 1):
+            # Using row.Index to get the proper item based on the current DataFrame structure
+            item = df_filtrat.at[row.Index, df_filtrat.columns[1]]
             
+            if item == "Cursuri instruire personal":
+                # Reset the counter after 'Cursuri instruire personal'
+                nr_crt_counter = 1  
+            elif item == "Toaleta ecologica":
+                # Reset the counter after 'Toaleta ecologica'
+                nr_crt_counter = 1
+    
+            # Check if we need to add subtotal
+            if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                # Add the item itself before subtotal
+                nr_crt.append(nr_crt_counter)
+                denumire.append(item)
+                nr_crt_counter += 1
+    
+                # Add subtotal entry
+                nr_crt.append("Subtotal " + ("1" if item == "Cursuri instruire personal" else "2"))
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la " + 
+                                ("obiectivele de mediu" if item == "Cursuri instruire personal" else "egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități"))
+            else:
+                nr_crt.append(nr_crt_counter)
+                denumire.append(item)
+                nr_crt_counter += 1
+    
+        # Append the 'Valoare totala eligibila proiect' and 'Pondere' without a 'Nr. crt.'
+        nr_crt.extend([None, "Pondere", "Pondere"])
+        denumire.extend([
+            "Valoare totala eligibila proiect",
+            "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu/ Valoare totala eligibila proiect",
+            "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități/ Valoare totala eligibila proiect"
+        ])
+    
+        # Create the final DataFrame
+        tabel_2 = pd.DataFrame({
+            "Nr. crt.": nr_crt,
+            "Denumire": denumire
+        })
+        
+        return tabel_2
+
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
