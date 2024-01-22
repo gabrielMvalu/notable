@@ -114,81 +114,45 @@ def main():
             st.error("Te rog să încarci un fișier.")
     
     def transforma_date_tabel2(df):
-        stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
+        # Identificăm rândul cu 'Total Proiect' și extragem datele relevante
+        stop_index = df[df.iloc[:, 1] == stop_text].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
+        # Eliminăm valorile nedorite, dar păstrăm 'Toaleta ecologica' în DataFrame
         valori_de_eliminat = ["Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
                               "Rampa mobila", "Total active corporale", "Total active necorporale", 
                               "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
-        
+    
+        # Verificăm dacă 'Cursuri instruire personal' există în DataFrame
         cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
         toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
         
-        # If both are present, ensure Toaleta ecologica is before Cursuri instruire personal
-        if cursuri_index and toaleta_index and cursuri_index[0] < toaleta_index[0]:
-            cursuri_index, toaleta_index = toaleta_index, cursuri_index  # Swap the indexes
+        # Dacă ambele există, schimbăm ordinea
+        if cursuri_index and toaleta_index:
+            # Salvați rândul 'Toaleta ecologica'
+            toaleta_row = df_filtrat.loc[toaleta_index[0]]
+            
+            # Eliminați 'Toaleta ecologica' din locația curentă
+            df_filtrat = df_filtrat.drop(toaleta_index)
+            
+            # Introduceți 'Toaleta ecologica' înaintea rândului 'Cursuri instruire personal'
+            partea_de_sus = df_filtrat.iloc[:cursuri_index[0]]
+            partea_de_jos = df_filtrat.iloc[cursuri_index[0]:]
+            df_filtrat = pd.concat([partea_de_sus, toaleta_row.to_frame().T, partea_de_jos])
     
-        # Insert Subtotal 1 before "Cursuri instruire personal"
-        if cursuri_index:
-            subtotal1_value = df_filtrat.iloc[:cursuri_index[0], 4].sum()
-            subtotal1_row = pd.DataFrame({
-                "Nr. crt.": ["Subtotal 1"],
-                "Denumire": ["Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu"],
-                "UM": ["buc"],
-                "Cantitate": [None],
-                "Preţ unitar (fără TVA)": [None],
-                "Valoare Totală (fără TVA)": [subtotal1_value]
-            }, index=[cursuri_index[0]])
-            df_filtrat = pd.concat([df_filtrat.iloc[:cursuri_index[0]], subtotal1_row, df_filtrat.iloc[cursuri_index[0]:]]).reset_index(drop=True)
+        # Creăm DataFrame-ul final
+        tabel_2 = pd.DataFrame({
+            "Nr. crt.": df_filtrat.iloc[:, 0],
+            "Denumire": df_filtrat.iloc[:, 1],
+            "UM": df_filtrat.iloc[:, 2],
+            "Cantitate": df_filtrat.iloc[:, 11],
+            "Preţ unitar (fără TVA)": df_filtrat.iloc[:, 3],
+            "Valoare Totală (fără TVA)": df_filtrat.iloc[:, 4]
+        }).reset_index(drop=True)
     
-        # Adjust indexes after inserting subtotal 1
-        cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
-        toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
-    
-        # Insert Subtotal 2 after "Toaleta ecologica"
-        if toaleta_index:
-            subtotal2_value = df_filtrat.iloc[toaleta_index[0]:toaleta_index[0]+1, 4].sum()
-            subtotal2_row = pd.DataFrame({
-                "Nr. crt.": ["Subtotal 2"],
-                "Denumire": ["Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități"],
-                "UM": ["buc"],
-                "Cantitate": [None],
-                "Preţ unitar (fără TVA)": [None],
-                "Valoare Totală (fără TVA)": [subtotal2_value]
-            }, index=[toaleta_index[0]+1])
-            df_filtrat = pd.concat([df_filtrat.iloc[:toaleta_index[0]+1], subtotal2_row, df_filtrat.iloc[toaleta_index[0]+1:]]).reset_index(drop=True)
-    
-        # Add the final total row at the end
-        final_total_value = df_filtrat.iloc[:, 4].sum()
-        final_total_row = pd.DataFrame({
-            "Nr. crt.": [None],
-            "Denumire": ["Valoare totala eligibila proiect"],
-            "UM": [None],
-            "Cantitate": [None],
-            "Preţ unitar (fără TVA)": [None],
-            "Valoare Totală (fără TVA)": [final_total_value]
-        }, index=[len(df_filtrat)])
-        df_filtrat = pd.concat([df_filtrat, final_total_row]).reset_index(drop=True)
-    
-        # Initialize a counter for 'Nr. crt.'
-        nr_crt_counter = 1
-        nr_crt = []
-        for index, row in df_filtrat.iterrows():
-            if isinstance(row["Nr. crt."], str) and row["Nr. crt."].startswith("Subtotal"):
-                nr_crt.append(row["Nr. crt."])  # Keep 'Subtotal' labels
-            elif pd.isna(row["Nr. crt."]):
-                nr_crt.append(None)  # Keep None for empty values
-            else:
-                nr_crt.append(nr_crt_counter)
-                nr_crt_counter += 1  # Increment the counter for other rows
-        
-        df_filtrat["Nr. crt."] = nr_crt  # Update 'Nr. crt.' in the dataframe
-    
-        return df_filtrat
-
-    
+        return tabel_2    
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
         if uploaded_file is not None:
