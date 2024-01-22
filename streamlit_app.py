@@ -87,7 +87,7 @@ def main():
             "Preţ unitar (fără TVA)": pret_unitar_list,
             "Valoare Totală (fără TVA)": valoare_totala_list,
             "Linie bugetară": linie_bugetara_list,
-            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + df.iloc[:, 3],
+            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + (df.iloc[:, 7]-df.iloc[:, 5]).astype(str),
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
     
