@@ -112,13 +112,13 @@ def main():
                 st.error(f"Eroare la procesarea datelor: {e}")
         else:
             st.error("Te rog să încarci un fișier.")
-            
-    def transforma_date_tabel2(df):
+                
+    def transforma_date_tabel2(df):  
         # Extract relevant data up to 'Total Proiect'
         stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
-        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        # Define the items to exclude
-        
+        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        
+            # Define the items to exclude
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale",
@@ -133,31 +133,27 @@ def main():
         nr_crt = []
         denumire = []
         
-        # Flags to add subtotals only once
-        subtotal1_added = False
-        subtotal2_added = False
-        
-        # Process each item and handle special cases for subtotals and 'Cursuri instruire personal' and 'Toaleta ecologica'
+        # Process each item
         for item in df_filtrat.iloc[:, 1]:
-            if item == "Cursuri instruire personal" and not subtotal1_added:
-                # Add Subtotal 1 before Cursuri instruire personal
-                nr_crt.append("Subtotal 1")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
-                subtotal1_added = True
-                nr_crt_counter = 1  # Reset the counter after subtotal 1
-            elif item == "Toaleta ecologica" and not subtotal2_added:
-                # Add Subtotal 2 after Toaleta ecologica
-                nr_crt.append(nr_crt_counter)
-                denumire.append("Toaleta ecologica")
-                nr_crt.append("Subtotal 2")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
-                subtotal2_added = True
-                nr_crt_counter = 1  # Reset the counter after subtotal 2
-            else:
+            if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                # Add special item and its subtotal
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
                 nr_crt_counter += 1
-        
+    
+                # Add subtotal after the special item
+                nr_crt.append("Subtotal " + ("2" if item == "Toaleta ecologica" else "1"))
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la " + 
+                                ("egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități" if item == "Toaleta ecologica" else "obiectivele de mediu"))
+    
+                # Reset the counter after adding a subtotal
+                nr_crt_counter = 1
+            else:
+                # Add regular item
+                nr_crt.append(nr_crt_counter)
+                denumire.append(item)
+                nr_crt_counter += 1
+    
         # Add the final 'Valoare totala eligibila proiect' without a number
         nr_crt += [None, "Pondere", "Pondere"]
         denumire += ["Valoare totala eligibila proiect",
