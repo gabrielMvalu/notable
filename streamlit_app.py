@@ -40,23 +40,31 @@ def main():
     stop_text = "Total proiect"
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
-       # Find the row where column 2 has the value stop_text
         stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
-         # Use the rows from 4 to this one if we find the value
         if stop_index:
-            df = df.iloc[3:stop_index[0]]  # Ignore the first 3 rows and stop at stop_text
+            df = df.iloc[3:stop_index[0]]
         else:
-            df = df.iloc[3:]  # If stop_text is not found, use everything from row 4
-        
-        # Filter rows based on certain conditions
+            df = df.iloc[3:]
+    
         df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]
-        # Convert to string to avoid errors in concatenation
+    
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
     
-        # Create a new DataFrame with specified columns and mapped data
+        # Initialize an empty list for Nr. crt.
+        nr_crt = []
+        counter = 1  # Start the counter from 1
+    
+        for index, row in df.iterrows():
+            # Check if the cell contains the specific text
+            if row[1] in ["total active corporale", "total active necorporale"]:
+                nr_crt.append("")  # Append an empty string for these rows
+            else:
+                nr_crt.append(counter)  # Append the current counter value
+                counter += 1  # Increment the counter
+    
         df_nou = pd.DataFrame({
-            "Nr. crt.": range(1, len(df) + 1),  # Generate a sequence of numbers for row count
+            "Nr. crt.": nr_crt,
             "Denumirea lucrărilor / bunurilor/ serviciilor": df.iloc[:, 1],
             "UM": "buc",
             "Cantitate": df.iloc[:, 11],
@@ -66,9 +74,8 @@ def main():
             "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 6] + " // " + "Neeligibil: " + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
-        return df_nou
-
-        
+    
+        return df_nou   
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 1"):
         if uploaded_file is not None:
