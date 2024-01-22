@@ -163,9 +163,9 @@ def main():
         
             # Calculați subtotals
             if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
-                subtotal_1 += row[6]  # Suma valorilor pentru coloana 'Valoare Totală'
+                subtotal_1 += row[5]  # Suma valorilor pentru coloana 'Valoare Totală'
             if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
-                subtotal_2 += row[6]
+                subtotal_2 += row[5]
             
             if item == "Cursuri instruire personal":
                 # Adăugați subtotal_1
@@ -218,7 +218,7 @@ def main():
         um.extend([None, None, None, None])
         cantitate.extend([None, None, None, None])
         pret_unitar.extend([None, None, None, None])
-        valoare_totala.extend([subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_1/val_total_proiect])
+        valoare_totala.extend([subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_2/val_total_proiect])
     
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
