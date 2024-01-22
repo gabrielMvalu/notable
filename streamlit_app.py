@@ -154,9 +154,9 @@ def main():
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
             
-        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
-        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
-        
+                subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
+                subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
+                
             if item == "Cursuri instruire personal":
                 nr_crt.append("Subtotal 1")
                 denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
