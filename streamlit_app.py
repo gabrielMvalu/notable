@@ -113,17 +113,19 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
     
-    def transforma_date_tabel2(df):
+    def transforma_date_tabel2(df, stop_text):
         # Extract relevant data up to 'Total Proiect'
         stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         
-        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]        # Define the items to exclude
+        df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
         
+        # Define the items to exclude
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale",
-            "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
+            "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere",
+            "Cursuri instruire personal", "Toaleta ecologica"  # Note these two are included here to be managed separately
         ]
         
         # Filter out the unwanted values
@@ -134,28 +136,33 @@ def main():
         nr_crt = []
         denumire = []
         
-        # Process each item, check if it's a subtotal trigger
-        for index, row in df_filtrat.iterrows():
-            item = row.iloc[1]
-            if item == "Cursuri instruire personal":
-                nr_crt.append("Subtotal 1")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
-                nr_crt_counter = 1  # Reset the counter after subtotal
-            elif item == "Toaleta ecologica":
+        # Special handling for the specified items to add subtotals and reset the counter
+        cursuri_added = False
+        toaleta_added = False
+    
+        for item in df_filtrat.iloc[:, 1]:
+            denumire.append(item)
+            if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
                 nr_crt.append(nr_crt_counter)
-                denumire.append(item)
                 nr_crt_counter += 1
-                nr_crt.append("Subtotal 2")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
             else:
-                nr_crt.append(nr_crt_counter)
-                denumire.append(item)
-                nr_crt_counter += 1
-        
-        # Append the final 'Valoare totala eligibila proiect' without a number
+                if item == "Cursuri instruire personal" and not cursuri_added:
+                    nr_crt.append("Subtotal 1")
+                    denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
+                    cursuri_added = True
+                    nr_crt_counter = 1  # Reset the counter after subtotal
+                elif item == "Toaleta ecologica" and not toaleta_added:
+                    if cursuri_added:  # Reset the counter if "Cursuri instruire personal" was already added
+                        nr_crt_counter = 1
+                    nr_crt.append(nr_crt_counter)
+                    toaleta_added = True
+                else:
+                    continue  # Skip adding the counter for the second time
+    
+        # Add the final 'Valoare totala eligibila proiect' without a number
         nr_crt += [None, "Pondere", "Pondere"]
-        denumire += ["Valoare totala eligibila proiect", 
-                     "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu/ Valoare totala eligibila proiect", 
+        denumire += ["Valoare totala eligibila proiect",
+                     "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu/ Valoare totala eligibila proiect",
                      "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități/ Valoare totala eligibila proiect"]
         
         # Create the final DataFrame
