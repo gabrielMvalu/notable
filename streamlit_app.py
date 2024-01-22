@@ -49,7 +49,7 @@ def main():
         df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]
     
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
-        df.iloc[:, 3] = df.iloc[:, 3].astype(str)
+        
     
         # Initialize an empty list for Nr. crt. and the columns that may be skipped
         nr_crt = []
