@@ -133,8 +133,8 @@ def main():
         nr_crt, denumiri, UM, cantitati, preturi_unitare, valori_totale, linii_bugetare = [], [], [], [], [], [], []
     
         # Calculul subtotalurilor
-        subtotal_1 = df_filtrat[df_filtrat['Denumire'].str.contains('criteriu 1')]['Valoare'].sum()
-        subtotal_2 = df_filtrat[df_filtrat['Denumire'].str.contains('criteriu 2')]['Valoare'].sum()
+        subtotal_1 = df_filtrat[df_filtrat['denumiri'].str.contains('criteriu 1')]['Valoare'].sum()
+        subtotal_2 = df_filtrat[df_filtrat['denumiri'].str.contains('criteriu 2')]['Valoare'].sum()
     
         # Procesarea fiecărui rând
         for idx, row in df_filtrat.iterrows():
