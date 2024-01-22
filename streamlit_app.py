@@ -118,7 +118,18 @@ def main():
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
-    
+
+
+        stop_in = df.index[df.iloc[:, 1].eq("Total proiect")].tolist()
+        
+        # Verifică dacă s-a găsit index-ul
+        if stop_in:
+            # Extrage valoarea din coloana 5 (index 4) pentru rândul găsit
+            val_total_proiect = df.iloc[stop_index[0], 4]
+        else:
+            # Dacă nu s-a găsit textul, poți seta val_total_proiect la un anumit valor default sau arunca o excepție, depinde de cazul tău.
+            val_total_proiect = None  # Sau poți seta la altă valoare default    
+            
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
             "Rampa mobila", "Total active corporale", "Total active necorporale", 
@@ -153,7 +164,7 @@ def main():
                 cantitate.append(None)
                 pret_unitar.append(None)
                 valoare_totala.append(None)
-    
+                            
             nr_crt.append(nr_crt_counter)
             denumire.append(item)
             um.append("buc")
@@ -173,7 +184,7 @@ def main():
         um.extend([None, None, None, None])
         cantitate.extend([None, None, None, None])
         pret_unitar.extend([None, None, None, None])
-        valoare_totala.extend([None, None, None, None])
+        valoare_totala.extend([None, None, None, val_total_proiect])
     
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
