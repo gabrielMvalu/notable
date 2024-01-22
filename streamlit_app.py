@@ -39,9 +39,9 @@ def main():
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
     # Funcție pentru preluarea și transformarea datelor
-    def transforma_date(df):
-        # Find the row where column 2 has the value stop_text
-        stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
+   def transforma_date(df):
+      # Find the row where column 2 has the value stop_text
+      stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
         # Use the rows from 4 to this one if we find the value
         if stop_index:
             df = df.iloc[3:stop_index[0]]  # Ignore the first 3 rows and stop at stop_text
@@ -50,7 +50,6 @@ def main():
         
         # Filter rows based on certain conditions
         df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]
-    
         # Convert to string to avoid errors in concatenation
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
