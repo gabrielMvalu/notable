@@ -57,7 +57,7 @@ def main():
     
         for index, row in df.iterrows():
             # Check if the cell contains the specific text
-            if row[1] in ["total active corporale", "total active necorporale"]:
+            if row[1] in ["Total active corporale", "Total active necorporale"]:
                 nr_crt.append("")  # Append an empty string for these rows
             else:
                 nr_crt.append(counter)  # Append the current counter value
