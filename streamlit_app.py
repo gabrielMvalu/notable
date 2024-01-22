@@ -153,10 +153,7 @@ def main():
         
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
-            
-                subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
-                subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
-                
+               
             if item == "Cursuri instruire personal":
                 nr_crt.append("Subtotal 1")
                 denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
@@ -172,7 +169,10 @@ def main():
             pret_unitar.append(df_filtrat.iloc[i-1, 3])
             valoare_totala.append(df_filtrat.iloc[i-1, 4])
             nr_crt_counter += 1
-    
+             
+        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
+        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
+          
         # Add entries after 'Toaleta ecologica'
         nr_crt.extend(["Subtotal 2", None, "Pondere", "Pondere"])
         denumire.extend([
