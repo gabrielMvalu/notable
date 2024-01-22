@@ -125,7 +125,7 @@ def main():
         # Verifică dacă s-a găsit index-ul
         if stop_in:
             # Extrage valoarea din coloana 5 (index 4) pentru rândul găsit
-            val_total_proiect = df.iloc[stop_index[0], 4]
+            val_total_proiect = df.iloc[stop_in[0], 4]
         else:
             # Dacă nu s-a găsit textul, poți seta val_total_proiect la un anumit valor default sau arunca o excepție, depinde de cazul tău.
             val_total_proiect = None  # Sau poți seta la altă valoare default    
