@@ -39,10 +39,10 @@ def main():
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
     # Funcție pentru preluarea și transformarea datelor
-   def transforma_date(df):
-      # Find the row where column 2 has the value stop_text
-      stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
-        # Use the rows from 4 to this one if we find the value
+    def transforma_date(df):
+       # Find the row where column 2 has the value stop_text
+        stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
+         # Use the rows from 4 to this one if we find the value
         if stop_index:
             df = df.iloc[3:stop_index[0]]  # Ignore the first 3 rows and stop at stop_text
         else:
@@ -89,7 +89,7 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
 
-   def transforma_date_tabel2(df):
+    def transforma_date_tabel2(df):
         # Identificăm rândul cu 'Total Proiect' și extragem datele relevante
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
