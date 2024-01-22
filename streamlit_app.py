@@ -142,7 +142,10 @@ def main():
         pret_unitar = []
         valoare_totala = []
 
-       
+        # Calculate subtotals
+        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
+        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
+
         total_proiect_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index
         if not total_proiect_index.empty:
             valoare_totala_eligibila = df.iloc[total_proiect_index[0], 5]
@@ -169,9 +172,6 @@ def main():
             pret_unitar.append(df_filtrat.iloc[i-1, 3])
             valoare_totala.append(df_filtrat.iloc[i-1, 4])
             nr_crt_counter += 1
-             
-        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
-        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
           
         # Add entries after 'Toaleta ecologica'
         nr_crt.extend(["Subtotal 2", None, "Pondere", "Pondere"])
