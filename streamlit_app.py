@@ -59,6 +59,7 @@ def main():
         pret_unitar_list = []
         valoare_totala_list = []
         linie_bugetara_list = []
+        contributie_la_criterii_list = []
     
         for index, row in df.iterrows():
             item = row[1].strip().lower()
@@ -70,6 +71,7 @@ def main():
                 pret_unitar_list.append(None)
                 valoare_totala_list.append(None)
                 linie_bugetara_list.append(None)
+                contributie_la_criterii_list.append(None)
             else:
                 nr_crt.append(counter)
                 um_list.append("buc")
@@ -77,6 +79,7 @@ def main():
                 pret_unitar_list.append(row[3])
                 valoare_totala_list.append(row[2])
                 linie_bugetara_list.append(row[14])
+                contributie_la_criterii_list.append("da")
                 counter += 1  # Increment the counter only if the condition is not met
     
         df_nou = pd.DataFrame({
