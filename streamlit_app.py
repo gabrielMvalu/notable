@@ -74,8 +74,8 @@ def main():
                 nr_crt.append(counter)
                 um_list.append("buc")
                 cantitate_list.append(row[11])
-                pret_unitar_list.append(row[4])
-                valoare_totala_list.append(row[3])
+                pret_unitar_list.append(row[3])
+                valoare_totala_list.append(row[4])
                 linie_bugetara_list.append(row[14])
                 counter += 1  # Increment the counter only if the condition is not met
     
