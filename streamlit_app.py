@@ -142,20 +142,31 @@ def main():
         pret_unitar = []
         valoare_totala = []
 
-        # Calculate subtotals
-        subtotal_1 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"]), 'Valoare Totală (fără TVA)'].sum()
-        subtotal_2 = df_filtrat.loc[df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 'Valoare Totală (fără TVA)'].sum()        
-
         total_proiect_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index
         if not total_proiect_index.empty:
             valoare_totala_eligibila = df.iloc[total_proiect_index[0], 5]
         else:
-            valoare_totala_eligibila = 0  
-            # Sau o valoare implicită, dacă 'Total proiect' nu există         
+            valoare_totala_eligibila = 0  # Or a default value if 'Total proiect' does not exist
+    
         # Process each item and handle special cases for additional text entries
-        
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
+    
+            # Calculate subtotals within the loop to avoid scope issues
+            if 'subtotal_1' not in locals():
+                subtotal_1 = df_filtrat.loc[
+                    df_filtrat['Denumire'].isin([
+                        "Stalpi de iluminat fotovoltaici mobili", "Drujba", "Tocator resturi vegetale", 
+                        "Excavator pe pneuri", "Miniexcavator", "Miniincarcator pe senile", "Rezervor combustibil"
+                    ]), 
+                    'Valoare Totală (fără TVA)'
+                ].sum()
+            
+            if 'subtotal_2' not in locals():
+                subtotal_2 = df_filtrat.loc[
+                    df_filtrat['Denumire'].isin(["Cursuri instruire personal", "Toaleta ecologica"]), 
+                    'Valoare Totală (fără TVA)'
+                ].sum()
                
             if item == "Cursuri instruire personal":
                 nr_crt.append("Subtotal 1")
