@@ -167,26 +167,7 @@ def main():
             if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
                 subtotal_2 += row[5]
             
-            if item == "Cursuri instruire personal":
-                # Adăugați subtotal_1
-                nr_crt.append("Subtotal 1")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
-                um.append(None)
-                cantitate.append(None)
-                pret_unitar.append(None)
-                valoare_totala.append(subtotal_1)
-        
-            if item in ["Toaleta ecologica", "Cursuri instruire personal"]:
-                # Adăugați subtotal_2
-                nr_crt.append("Subtotal 2")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
-                um.append(None)
-                cantitate.append(None)
-                pret_unitar.append(None)
-                valoare_totala.append(subtotal_2)
-
-
-        
+       
         # Process each item and handle special cases for additional text entries
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
@@ -208,17 +189,18 @@ def main():
             nr_crt_counter += 1
     
         # Add entries after 'Toaleta ecologica'
-        nr_crt.extend(["Subtotal 2", None, "Pondere", "Pondere"])
+        nr_crt.extend(["Subtotal 1", "Subtotal 2", None, "Pondere", "Pondere"])
         denumire.extend([
+            "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu", 
             "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități",
             "Valoare totala eligibila proiect",
             "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu / Valoare totala eligibila proiect",
             "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități / Valoare totala eligibila proiect"
         ])
-        um.extend([None, None, None, None])
-        cantitate.extend([None, None, None, None])
-        pret_unitar.extend([None, None, None, None])
-        valoare_totala.extend([subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_2/val_total_proiect])
+        um.extend([None, None, None, None, None])
+        cantitate.extend([None, None, None, None, None])
+        pret_unitar.extend([None, None, None, None, None])
+        valoare_totala.extend([subtotal_1, Subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_2/val_total_proiect])
     
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
