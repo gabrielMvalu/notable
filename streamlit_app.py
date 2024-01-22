@@ -51,31 +51,48 @@ def main():
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
         df.iloc[:, 7] = df.iloc[:, 7].astype(str)
     
-        # Initialize an empty list for Nr. crt.
+        # Initialize an empty list for Nr. crt. and the columns that may be skipped
         nr_crt = []
-        counter = 1  # Start the counter from 1
+        counter = 1
+        um_list = []
+        cantitate_list = []
+        pret_unitar_list = []
+        valoare_totala_list = []
+        linie_bugetara_list = []
     
         for index, row in df.iterrows():
+            item = row[1].strip().lower()
             # Check if the cell contains the specific text
-            if row[1] in ["Total active corporale", "Total active necorporale"]:
-                nr_crt.append("")  # Append an empty string for these rows
+            if item in ["total active corporale", "total active necorporale"]:
+                nr_crt.append(None)  # Append None for these rows in Nr. crt.
+                um_list.append(None)
+                cantitate_list.append(None)
+                pret_unitar_list.append(None)
+                valoare_totala_list.append(None)
+                linie_bugetara_list.append(None)
             else:
-                nr_crt.append(counter)  # Append the current counter value
-                counter += 1  # Increment the counter
+                nr_crt.append(counter)
+                um_list.append("buc")
+                cantitate_list.append(row[11])
+                pret_unitar_list.append(row[3])
+                valoare_totala_list.append(row[2])
+                linie_bugetara_list.append(row[14])
+                counter += 1  # Increment the counter only if the condition is not met
     
         df_nou = pd.DataFrame({
             "Nr. crt.": nr_crt,
             "Denumirea lucrărilor / bunurilor/ serviciilor": df.iloc[:, 1],
-            "UM": "buc",
-            "Cantitate": df.iloc[:, 11],
-            "Preţ unitar (fără TVA)": df.iloc[:, 3],
-            "Valoare Totală (fără TVA)": df.iloc[:, 2],
-            "Linie bugetară": df.iloc[:, 14],
-            "Eligibil/ neeligibil": "Eligibil: " + df.iloc[:, 6] + " // " + "Neeligibil: " + df.iloc[:, 7],
+            "UM": um_list,
+            "Cantitate": cantitate_list,
+            "Preţ unitar (fără TVA)": pret_unitar_list,
+            "Valoare Totală (fără TVA)": valoare_totala_list,
+            "Linie bugetară": linie_bugetara_list,
+            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + df.iloc[:, 7],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
     
-        return df_nou   
+        return df_nou
+
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 1"):
         if uploaded_file is not None:
