@@ -49,7 +49,7 @@ def main():
         df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]
     
         df.iloc[:, 6] = df.iloc[:, 6].astype(str)
-        df.iloc[:, 7] = df.iloc[:, 7].astype(str)
+        df.iloc[:, 3] = df.iloc[:, 3].astype(str)
     
         # Initialize an empty list for Nr. crt. and the columns that may be skipped
         nr_crt = []
@@ -74,8 +74,8 @@ def main():
                 nr_crt.append(counter)
                 um_list.append("buc")
                 cantitate_list.append(row[11])
-                pret_unitar_list.append(row[3])
-                valoare_totala_list.append(row[2])
+                pret_unitar_list.append(row[4])
+                valoare_totala_list.append(row[3])
                 linie_bugetara_list.append(row[14])
                 counter += 1  # Increment the counter only if the condition is not met
     
@@ -87,7 +87,7 @@ def main():
             "Preţ unitar (fără TVA)": pret_unitar_list,
             "Valoare Totală (fără TVA)": valoare_totala_list,
             "Linie bugetară": linie_bugetara_list,
-            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + df.iloc[:, 7],
+            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + df.iloc[:, 3],
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
     
