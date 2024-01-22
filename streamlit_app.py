@@ -185,17 +185,7 @@ def main():
                 pret_unitar.append(None)
                 valoare_totala.append(subtotal_2)       
                 # Process each item and handle special cases for additional text entries
-        
-        for i, row in enumerate(df_filtrat.itertuples(), 1):
-            item = row[2]  # Assuming 'Denumire' is the second column
-    
-            if item == "Cursuri instruire personal":
-                nr_crt.append("Subtotal 1")
-                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
-                um.append(None)
-                cantitate.append(None)
-                pret_unitar.append(None)
-                valoare_totala.append(subtotal_1)
+
                             
             nr_crt.append(nr_crt_counter)
             denumire.append(item)
