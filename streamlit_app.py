@@ -114,39 +114,45 @@ def main():
                st.error("Te rog să încarci un fișier.")
             
     def transforma_date_tabel2(df):
-        # Extract relevant data up to 'Total Proiect'
+        # Initial processing as per your existing function
         stop_index = df[df.iloc[:, 1] == stop_text].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
         df_filtrat = df_filtrat[df_filtrat.iloc[:, 1].notna() & (df_filtrat.iloc[:, 1] != 0) & (df_filtrat.iloc[:, 1] != '-')]
     
-        # Define items to exclude
         valori_de_eliminat = [
             "Servicii de adaptare a utilajelor pentru operarea acestora de persoanele cu dizabilitati",
-            "Rampa mobila", "Total active corporale", "Total active necorporale",
+            "Rampa mobila", "Total active corporale", "Total active necorporale", 
             "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
         ]
         df_filtrat = df_filtrat[~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)]
     
-        # Initialize 'Nr. crt.' counter and 'Denumire' list
+        cursuri_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Cursuri instruire personal"].tolist()
+        toaleta_index = df_filtrat.index[df_filtrat.iloc[:, 1] == "Toaleta ecologica"].tolist()
+        if cursuri_index and toaleta_index:
+            toaleta_row = df_filtrat.loc[toaleta_index[0]]
+            df_filtrat = df_filtrat.drop(toaleta_index)
+            df_filtrat = pd.concat([df_filtrat.iloc[:cursuri_index[0]], toaleta_row.to_frame().T, df_filtrat.iloc[cursuri_index[0]:]])
+    
+        # Initialize 'Nr. crt.' counter
+        nr_crt_counter = 1
         nr_crt = []
         denumire = []
     
-        # Process each item, handle special cases for additional text entries
-        nr_crt_counter = 1
+        # Process each item and handle special cases for additional text entries
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
     
             if item == "Cursuri instruire personal":
-                # Add 'Subtotal 1' before 'Cursuri instruire personal'
-                nr_crt.append("Subtotal 1")
+                # Add text entry before 'Cursuri instruire personal'
+                nr_crt.append("Subtotal 1")  # No 'Nr. crt.' for this text entry
                 denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
     
             nr_crt.append(nr_crt_counter)
             denumire.append(item)
             nr_crt_counter += 1
     
-        # Add 'Subtotal 2', 'Valoare totala eligibila proiect', and 'Pondere' entries
-        nr_crt.extend(["Subtotal 2", None, "Pondere", "Pondere"])
+        # Add entries after 'Toaleta ecologica'
+        nr_crt.extend(["Subtotal 2", None, "Pondere", "Pondere"])  # No 'Nr. crt.' for these text entries
         denumire.extend([
             "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități",
             "Valoare totala eligibila proiect",
