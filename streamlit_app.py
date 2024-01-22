@@ -126,6 +126,9 @@ def main():
             "Publicitate", "Consultanta management", "Consultanta achizitii", "Consultanta scriere"
         ]
         
+        # Initialize 'Nr. crt.' counter
+        nr_crt_counter = 1
+        
         # Include 'Cursuri instruire personal' and 'Toaleta ecologica' but exclude other unwanted values
         df_filtrat = df_filtrat[(~df_filtrat.iloc[:, 1].isin(valori_de_eliminat)) | (df_filtrat.iloc[:, 1].isin(["Cursuri instruire personal", "Toaleta ecologica"]))].reset_index(drop=True)
     
