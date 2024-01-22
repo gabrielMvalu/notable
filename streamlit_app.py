@@ -176,12 +176,14 @@ def main():
         nr_crt_counter = 1
         nr_crt = []
         for index, row in df_filtrat.iterrows():
-            if row["Nr. crt."].startswith("Subtotal") or row["Nr. crt."].isna():
-                nr_crt.append(row["Nr. crt."])  # Keep 'Subtotal' or None
+            if isinstance(row["Nr. crt."], str) and row["Nr. crt."].startswith("Subtotal"):
+                nr_crt.append(row["Nr. crt."])  # Keep 'Subtotal' labels
+            elif pd.isna(row["Nr. crt."]):
+                nr_crt.append(None)  # Keep None for empty values
             else:
                 nr_crt.append(nr_crt_counter)
                 nr_crt_counter += 1  # Increment the counter for other rows
-    
+        
         df_filtrat["Nr. crt."] = nr_crt  # Update 'Nr. crt.' in the dataframe
     
         return df_filtrat
