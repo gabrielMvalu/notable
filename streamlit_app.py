@@ -167,7 +167,7 @@ def main():
             if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
                 subtotal_2 += row[5]
                 
-            if item not in ["Toaleta ecologica", "Cursuri instruire personal"]:
+            if item == "Cursuri instruire personal":
                 # Adăugați subtotal_1
                 nr_crt.append("Subtotal 1")
                 denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
