@@ -39,7 +39,7 @@ def main():
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
     # Funcție pentru preluarea și transformarea datelor
-   def transforma_date(df):
+    def transforma_date(df):
         # Find the row where column 2 has the value stop_text
         stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
         # Use the rows from 4 to this one if we find the value
@@ -68,6 +68,7 @@ def main():
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
         return df_nou
+
         
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 1"):
