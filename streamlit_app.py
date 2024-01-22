@@ -152,7 +152,41 @@ def main():
         cantitate = []
         pret_unitar = []
         valoare_totala = []
-    
+
+        # Inițializați variabilele de subtotal
+        subtotal_1 = 0
+        subtotal_2 = 0
+        
+        # Bucla de procesare a elementelor
+        for i, row in enumerate(df_filtrat.itertuples(), 1):
+            item = row[2]  # Assuming 'Denumire' is the second column
+        
+            # Calculați subtotals
+            if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                subtotal_1 += row[6]  # Suma valorilor pentru coloana 'Valoare Totală'
+            if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                subtotal_2 += row[6]
+            
+            if item == "Cursuri instruire personal":
+                # Adăugați subtotal_1
+                nr_crt.append("Subtotal 1")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
+                um.append(None)
+                cantitate.append(None)
+                pret_unitar.append(None)
+                valoare_totala.append(subtotal_1)
+        
+            if item in ["Toaleta ecologica", "Cursuri instruire personal"]:
+                # Adăugați subtotal_2
+                nr_crt.append("Subtotal 2")
+                denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități")
+                um.append(None)
+                cantitate.append(None)
+                pret_unitar.append(None)
+                valoare_totala.append(subtotal_2)
+
+
+        
         # Process each item and handle special cases for additional text entries
         for i, row in enumerate(df_filtrat.itertuples(), 1):
             item = row[2]  # Assuming 'Denumire' is the second column
@@ -184,7 +218,7 @@ def main():
         um.extend([None, None, None, None])
         cantitate.extend([None, None, None, None])
         pret_unitar.extend([None, None, None, None])
-        valoare_totala.extend([None, None, None, val_total_proiect])
+        valoare_totala.extend([subtotal_2, val_total_proiect, subtotal_1/val_total_proiect,subtotal_1/val_total_proiect])
     
         # Create the final DataFrame
         tabel_2 = pd.DataFrame({
