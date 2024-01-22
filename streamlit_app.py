@@ -113,7 +113,7 @@ def main():
         else:
             st.error("Te rog să încarci un fișier.")
                 
-    def transforma_date_tabel2(df, stop_text):
+    def transforma_date_tabel2(df):
         # Extract relevant data up to 'Total Proiect'
         stop_index = df[df.iloc[:, 1].str.contains(stop_text, case=False, na=False)].index.min()
         df_filtrat = df.iloc[3:stop_index] if pd.notna(stop_index) else df.iloc[3:]
