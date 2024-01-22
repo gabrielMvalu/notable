@@ -142,9 +142,8 @@ def main():
                 denumire.append("Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu")
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
-                nr_crt_counter = 1  # Reset counter for next items
+                nr_crt_counter += 1  # Continue counting for 'Toaleta ecologica'
     
-            # Insert 'Subtotal 2' after 'Toaleta ecologica'
             elif item == "Toaleta ecologica":
                 nr_crt.append(nr_crt_counter)
                 denumire.append(item)
