@@ -57,7 +57,6 @@ def main():
         pret_unitar_list = []
         valoare_totala_list = []
         linie_bugetara_list = []
-        contributie_la_list = []
         # Initialize an empty list for the "Eligibil/ Neeligibil" column
         eligibil_neeligibil = [] 
         
@@ -78,7 +77,6 @@ def main():
                 pret_unitar_list.append(row[3])
                 valoare_totala_list.append(row[4])
                 linie_bugetara_list.append(row[14])
-                contributie_la_list.append(row[15])
                 counter += 1  # Increment the counter only if the condition is not met
     
         for index, row in df.iterrows():
@@ -114,7 +112,7 @@ def main():
             "Valoare Totală (fără TVA)": valoare_totala_list,
             "Linie bugetară": linie_bugetara_list,
             "Eligibil/ neeligibil": eligibil_neeligibil,
-            "Contribuie la criteriile de evaluare a,b,c,d": contributie_la_list
+            "Contribuie la criteriile de evaluare a,b,c,d": df.iloc[:, 15]
         })
     
         return df_nou
