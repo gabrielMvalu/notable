@@ -79,14 +79,25 @@ def main():
                 linie_bugetara_list.append(row[14])
                 counter += 1  # Increment the counter only if the condition is not met
     
-        # Loop through each row and calculate the "Eligibil/ Neeligibil" value
         for index, row in df.iterrows():
-            if row[6] == 0 and row[4] != 0:
-                eligibil_neeligibil.append("0 // " + str(row[4]))
-            elif row[6] == row[4]:
-                eligibil_neeligibil.append(str(row[4]) + " // 0")
+            # Convert to numeric and handle missing values
+            try:
+                val_6 = pd.to_numeric(row[6], errors='coerce')
+                val_4 = pd.to_numeric(row[4], errors='coerce')
+            except Exception as e:
+                st.error(f"Error converting values to numeric: {e}")
+                break
+        
+            if pd.isna(val_6) or pd.isna(val_4):
+                eligibil_neeligibil.append("Data Missing")
+            elif val_6 == 0 and val_4 != 0:
+                eligibil_neeligibil.append("0 // " + str(val_4))
+            elif val_6 == 0 and val_4 == 0:
+                eligibil_neeligibil.append("0 // 0")
+            elif val_6 < val_4:
+                eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
             else:
-                eligibil_neeligibil.append(str(row[6]) + " // " + str(row[6] - row[4]))
+                eligibil_neeligibil.append(str(val_6) + " // " + str(row[7] - val_5))
 
     
         # Your existing code for creating other columns like 'nr_crt', 'um_list', etc., remains here
