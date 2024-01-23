@@ -168,61 +168,61 @@ def main():
                 toaleta_row = df_filtrat.loc[toaleta_index[0]]
                 df_filtrat = df_filtrat.drop(toaleta_index)
                 df_filtrat = pd.concat([df_filtrat.iloc[:cursuri_index[0]], toaleta_row.to_frame().T, df_filtrat.iloc[cursuri_index[0]:]])
-    
-        # Initialize 'Nr. crt.' counter and lists for all columns
-        nr_crt_counter = 1
-        nr_crt = []
-        denumire = []
-        um = []
-        cantitate = []
-        pret_unitar = []
-        valoare_totala = []
-    
-        # Inițializați variabilele de subtotal
-        subtotal_1 = 0
-        subtotal_2 = 0
-    
-        # Bucla de procesare a elementelor
-        for i, row in enumerate(df_filtrat.itertuples(), 1):
-            item = row[2]  # Assuming 'Denumire' is the second column
-    
-            # Calculați subtotals
-            if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
-                subtotal_1 += row[5]  # Suma valorilor pentru coloana 'Valoare Totală'
-            if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
-                subtotal_2 += row[5]
-    
-            # Add items to lists
-            nr_crt.append(nr_crt_counter)
-            denumire.append(item)
-            um.append("buc")
-            cantitate.append(df_filtrat.iloc[i-1, 11])  # Adjust the index as necessary
-            pret_unitar.append(df_filtrat.iloc[i-1, 3])
-            valoare_totala.append(df_filtrat.iloc[i-1, 4])
-            nr_crt_counter += 1
-    
-        # Add subtotals after processing all items
-        nr_crt.extend(["Subtotal 1", "Subtotal 2"])
-        denumire.extend([
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu",
-            "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități"
-        ])
-        um.extend([None, None])
-        cantitate.extend([None, None])
-        pret_unitar.extend([None, None])
-        valoare_totala.extend([subtotal_1, subtotal_2])
-    
-        # Create the final DataFrame
-        tabel_2 = pd.DataFrame({
-            "Nr. crt.": nr_crt,
-            "Denumire": denumire,
-            "UM": um,
-            "Cantitate": cantitate,
-            "Preţ unitar (fără TVA)": pret_unitar,
-            "Valoare Totală (fără TVA)": valoare_totala
-        })
-    
-        return tabel_2
+        
+            # Initialize 'Nr. crt.' counter and lists for all columns
+            nr_crt_counter = 1
+            nr_crt = []
+            denumire = []
+            um = []
+            cantitate = []
+            pret_unitar = []
+            valoare_totala = []
+        
+            # Inițializați variabilele de subtotal
+            subtotal_1 = 0
+            subtotal_2 = 0
+        
+            # Bucla de procesare a elementelor
+            for i, row in enumerate(df_filtrat.itertuples(), 1):
+                item = row[2]  # Assuming 'Denumire' is the second column
+        
+                # Calculați subtotals
+                if item not in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                    subtotal_1 += row[5]  # Suma valorilor pentru coloana 'Valoare Totală'
+                if item in ["Cursuri instruire personal", "Toaleta ecologica"]:
+                    subtotal_2 += row[5]
+        
+                # Add items to lists
+                nr_crt.append(nr_crt_counter)
+                denumire.append(item)
+                um.append("buc")
+                cantitate.append(df_filtrat.iloc[i-1, 11])  # Adjust the index as necessary
+                pret_unitar.append(df_filtrat.iloc[i-1, 3])
+                valoare_totala.append(df_filtrat.iloc[i-1, 4])
+                nr_crt_counter += 1
+        
+            # Add subtotals after processing all items
+            nr_crt.extend(["Subtotal 1", "Subtotal 2"])
+            denumire.extend([
+                "Total valoare cheltuieli cu investiția care contribuie substanțial la obiectivele de mediu",
+                "Total valoare cheltuieli cu investiția care contribuie substanțial la egalitatea de șanse, de tratament și accesibilitatea pentru persoanele cu dizabilități"
+            ])
+            um.extend([None, None])
+            cantitate.extend([None, None])
+            pret_unitar.extend([None, None])
+            valoare_totala.extend([subtotal_1, subtotal_2])
+        
+            # Create the final DataFrame
+            tabel_2 = pd.DataFrame({
+                "Nr. crt.": nr_crt,
+                "Denumire": denumire,
+                "UM": um,
+                "Cantitate": cantitate,
+                "Preţ unitar (fără TVA)": pret_unitar,
+                "Valoare Totală (fără TVA)": valoare_totala
+            })
+        
+            return tabel_2
 
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 2"):
