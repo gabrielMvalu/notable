@@ -20,8 +20,6 @@ def main():
     
         <h1 class='title'>Pregatirea datelor din P. FINANCIAR pentru completare tabel subcap 2.4</h1>
         """, unsafe_allow_html=True)
-
-
     
     # Sidebar pentru încărcarea și afișarea logo-ului și textului
     st.sidebar.title("Încărcarea Documentelor")
@@ -35,9 +33,21 @@ def main():
     # Încărcarea fișierului în sidebar
     uploaded_file = st.sidebar.file_uploader("Încarcă documentul '*.xlsx' aici", type="xlsx", accept_multiple_files=False)
 
-    
     # Textul care marchează sfârșitul datelor relevante și începutul extracției
     stop_text = "Total proiect"
+
+    # Function to calculate "Eligibil/ neeligibil" value based on conditions
+    def calculate_eligibil(row):
+        if row[6] == 0:
+            if row[4] == 0:
+                return str(row[4]) + " // 0"
+            else:
+                return "0 // " + str(row[4])
+        elif row[6] < row[4]:
+            return str(row[6]) + " // " + str(row[6] - row[4])
+        else:
+            return str(row[6]) + " // " + str(row[7] - row[5])
+
     # Funcție pentru preluarea și transformarea datelor
     def transforma_date(df):
         stop_index = df.index[df.iloc[:, 1].eq(stop_text)].tolist()
@@ -48,9 +58,6 @@ def main():
     
         df = df[df.iloc[:, 1].notna() & (df.iloc[:, 1] != 0) & (df.iloc[:, 1] != '-')]
     
-        df.iloc[:, 6] = df.iloc[:, 6].astype(str)
-        
-    
         # Initialize an empty list for Nr. crt. and the columns that may be skipped
         nr_crt = []
         counter = 1
@@ -59,6 +66,8 @@ def main():
         pret_unitar_list = []
         valoare_totala_list = []
         linie_bugetara_list = []
+
+        eligibil_list = []
     
         for index, row in df.iterrows():
             item = row[1].strip().lower()
@@ -70,6 +79,7 @@ def main():
                 pret_unitar_list.append(None)
                 valoare_totala_list.append(None)
                 linie_bugetara_list.append(None)
+                eligibil_list.append(None)
             else:
                 nr_crt.append(counter)
                 um_list.append("buc")
@@ -77,6 +87,7 @@ def main():
                 pret_unitar_list.append(row[3])
                 valoare_totala_list.append(row[4])
                 linie_bugetara_list.append(row[14])
+                eligibil_list.append(calculate_eligibil(row))
                 counter += 1  # Increment the counter only if the condition is not met
     
         df_nou = pd.DataFrame({
@@ -87,12 +98,11 @@ def main():
             "Preţ unitar (fără TVA)": pret_unitar_list,
             "Valoare Totală (fără TVA)": valoare_totala_list,
             "Linie bugetară": linie_bugetara_list,
-            "Eligibil/ neeligibil": df.iloc[:, 6] + " // " + (df.iloc[:, 7]-df.iloc[:, 5]).astype(str),
+            "Eligibil/ neeligibil": eligibil_list,
             "Contribuie la criteriile de evaluare a,b,c,d": "da"
         })
     
         return df_nou
-
     # Butoane pentru generarea tabelelor în sidebar
     if st.sidebar.button("Generează Tabel 1"):
         if uploaded_file is not None:
