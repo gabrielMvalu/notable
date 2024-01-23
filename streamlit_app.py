@@ -92,12 +92,10 @@ def main():
                 eligibil_neeligibil.append("Data Missing")
             elif val_6 == 0 and val_4 != 0:
                 eligibil_neeligibil.append("0 // " + str(val_4))
-            elif val_6 == 0 and val_4 == 0:
-                eligibil_neeligibil.append("0 // 0")
             elif val_6 < val_4:
-                eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
+                eligibil_neeligibil.append(str(val_6) + " // " + str(val_4 - val_6))
             else:
-                eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
+                eligibil_neeligibil.append("0 // 0")
 
     
         # Your existing code for creating other columns like 'nr_crt', 'um_list', etc., remains here
