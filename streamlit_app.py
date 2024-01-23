@@ -97,7 +97,7 @@ def main():
             elif val_6 < val_4:
                 eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
             else:
-                eligibil_neeligibil.append(str(val_6) + " // " + str(row[7] - val_5))
+                eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
 
     
         # Your existing code for creating other columns like 'nr_crt', 'um_list', etc., remains here
