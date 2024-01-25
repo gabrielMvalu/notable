@@ -91,7 +91,7 @@ def main():
             if pd.isna(val_6) or pd.isna(val_4):
                 eligibil_neeligibil.append("Data Missing")
             elif val_6 == 0 and val_4 != 0:
-                eligibil_neeligibil.append("0 // " + str(round(val_4,2))
+                eligibil_neeligibil.append("0 // " + str(round(val_4,2)))
             elif val_6 == 0 and val4 == 0:
                 eligibil_neeligibil.append("0 // 0")
             elif val_6 < val_4:
