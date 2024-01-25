@@ -91,13 +91,13 @@ def main():
             if pd.isna(val_6) or pd.isna(val_4):
                 eligibil_neeligibil.append("Data Missing")
             elif val_6 == 0 and val_4 != 0:
-                eligibil_neeligibil.append("0 // " + str(val_4))
+                eligibil_neeligibil.append("0 // " + str(round(val_4,2))
             elif val_6 == 0 and val4 == 0:
                 eligibil_neeligibil.append("0 // 0")
             elif val_6 < val_4:
-                eligibil_neeligibil.append(str(val_6) + " // " + str(val_4 - val_6))
+                eligibil_neeligibil.append(str(round(val_6,)) + " // " + str(round(val_4 - val_6,2)))
             else:
-                eligibil_neeligibil.append(str(val_6) + " // " + str(val_6 - val_4))
+                eligibil_neeligibil.append(str(round(val_6,2)) + " // " + str(round(val_6 - val_4,2)))
 
     
         # Your existing code for creating other columns like 'nr_crt', 'um_list', etc., remains here
