@@ -95,7 +95,7 @@ def main():
             elif val_6 == 0 and val4 == 0:
                 eligibil_neeligibil.append("0 // 0")
             elif val_6 < val_4:
-                eligibil_neeligibil.append(str(round(val_6,)) + " // " + str(round(val_4 - val_6,2)))
+                eligibil_neeligibil.append(str(round(val_6,2)) + " // " + str(round(val_4 - val_6,2)))
             else:
                 eligibil_neeligibil.append(str(round(val_6,2)) + " // " + str(round(val_6 - val_4,2)))
 
